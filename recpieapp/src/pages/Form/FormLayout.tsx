@@ -10,7 +10,7 @@ const FormLayout = ({handleLogin}:any) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/your-api-endpoint', { email, password });
+      const response = await axios.post('http://localhost:3001/auth/login', { email, password });
       console.log('Response:', response.data);
     } catch (error) {
       console.error('Error:', error);
