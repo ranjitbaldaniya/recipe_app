@@ -20,7 +20,6 @@ const RecipeSchema = new Schema({
   approved: { type: Boolean, default: false },
   user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   create_at: { type: Date, default: Date.now },
-  delete_at: { type: Date }
 });
 
 module.exports = mongoose.model('Recipe', RecipeSchema);
