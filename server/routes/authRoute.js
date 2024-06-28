@@ -11,4 +11,6 @@ authRoute.post("/register", registerController);
 
 // Login route
 authRoute.post("/login", loginController);
+
+
 export default authRoute;
