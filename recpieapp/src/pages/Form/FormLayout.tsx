@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 
-const FormLayout = ({handleLogin}:any) => {
+const Login = ({handleLogin}:any) => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [success,setSuccess]=useState<boolean>(handleLogin)
@@ -18,8 +18,6 @@ const FormLayout = ({handleLogin}:any) => {
   };
   return (
     <>
-      {/* <Breadcrumb pageName="Form Layout" /> */}
-
       <div className="justify-center items-center mx-115 mt-20">
         
 
@@ -105,4 +103,4 @@ const FormLayout = ({handleLogin}:any) => {
   );
 };
 
-export default FormLayout;
+export default Login;

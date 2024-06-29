@@ -5,17 +5,19 @@ import Loader from './common/Loader';
 import PageTitle from './components/PageTitle';
 import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
-import Calendar from './pages/Calendar';
 import Chart from './pages/Chart';
 import ECommerce from './pages/Dashboard/ECommerce';
-import FormElements from './pages/Form/FormElements';
 import FormLayout from './pages/Form/FormLayout';
 import Profile from './pages/Profile';
-import Settings from './pages/Settings';
 import Tables from './pages/Tables';
 import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
 import DefaultLayout from './layout/DefaultLayout';
+import Homepage from './UserLayout/components/Homepage';
+import Login from './pages/Form/FormLayout';
+import Contact from './UserLayout/components/Pages/Contact';
+import Aboutus from './UserLayout/components/Pages/Aboutus';
+import Recpies from './UserLayout/components/Pages/Recpies';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -29,21 +31,22 @@ function App() {
     setTimeout(() => setLoading(false), 1000);
   }, []);
 
-  const handleLogin = false
+  const handleLogin = true
   return loading ? (
     <Loader />
   ) : (
     <>
     {!handleLogin ?
     <FormLayout handleLogin={handleLogin}/>
-    : <DefaultLayout> 
+    : 
+    // <DefaultLayout> 
       <Routes>
       <Route
           index
           element={
             <>
               
-              {/* <ECommerce /> */}
+              <ECommerce />
             </>
           }
         />
@@ -57,11 +60,10 @@ function App() {
           }
         />
         <Route
-          path="/calendar"
+          path="/users/fe"
           element={
             <>
-              <PageTitle title="Calendar | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Calendar />
+              <Homepage />
             </>
           }
         />
@@ -75,20 +77,34 @@ function App() {
           }
         />
         <Route
-          path="/forms/form-elements"
+          path="/admin/login"
           element={
             <>
-              <PageTitle title="Form Elements | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <FormElements />
+              <Login />
             </>
           }
         />
-        <Route
-          path="/forms/form-layout"
+         <Route
+          path="/contact"
           element={
             <>
-              <PageTitle title="Form Layout | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <FormLayout />
+              <Contact />
+            </>
+          }
+        />
+         <Route
+          path="/aboutus"
+          element={
+            <>
+              <Aboutus />
+            </>
+          }
+        />
+         <Route
+          path="/user-recpie"
+          element={
+            <>
+              <Recpies />
             </>
           }
         />
@@ -106,7 +122,7 @@ function App() {
           element={
             <>
               <PageTitle title="Settings | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Settings />
+              {/* <Settxings /> */}
             </>
           }
         />
@@ -156,7 +172,8 @@ function App() {
           }
         />
       </Routes>
-    </DefaultLayout>}
+    // </DefaultLayout>
+    }
       </>
   );
 }
