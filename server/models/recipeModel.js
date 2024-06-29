@@ -11,8 +11,7 @@ const RecipeSchema = new Schema({
   recipe_steps_eng: { type: String, required: true },
   recipe_steps_hindi: { type: String },
   recipe_steps_guj: { type: String },
-  categories: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
-  sub_categories: { type: Schema.Types.ObjectId, ref: 'SubCategory', required: true },
+  category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
   num_of_people_to_served: { type: Number, required: true },
   images: { type: String, required: true },
   video_url: { type: String },
@@ -20,7 +19,11 @@ const RecipeSchema = new Schema({
   approved: { type: Boolean, default: false },
   user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   create_at: { type: Date, default: Date.now },
-  delete_at: { type: Date }
+  update_at: { type: Date, default: Date.now },
+  create_by: { type: Schema.Types.ObjectId, ref: 'User' },
+  update_by: { type: Schema.Types.ObjectId, ref: 'User' },
+  delete_at: { type: Date },
+  delete_by: { type: Schema.Types.ObjectId, ref: 'User' }
 });
 
-module.exports = mongoose.model('Recipe', RecipeSchema);
+export const Recipe = mongoose.model('Recipe', RecipeSchema);

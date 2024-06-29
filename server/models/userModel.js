@@ -8,7 +8,10 @@ const UserSchema = new Schema({
   gender: { type: Boolean, required: true },
   role: { type: String, required: true },
   create_At: { type: Date, default: Date.now },
-  update_At: { type: Date, default: Date.now }
+  update_At: { type: Date, default: Date.now },
+  update_by: { type: Schema.Types.ObjectId, ref: 'User' },
+  delete_at: { type: Date },
+  delete_by: { type: Schema.Types.ObjectId, ref: 'User' }
 });
 
-module.exports = mongoose.model('User', UserSchema);
+export const UserModel = mongoose.model('User', UserSchema);

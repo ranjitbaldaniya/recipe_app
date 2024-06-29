@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
-
+import { useEffect, useState, ReactNode } from 'react';
+import { Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import Loader from './common/Loader';
 import PageTitle from './components/PageTitle';
 import SignIn from './pages/Authentication/SignIn';
@@ -10,18 +9,43 @@ import ECommerce from './pages/Dashboard/ECommerce';
 import FormLayout from './pages/Form/FormLayout';
 import Profile from './pages/Profile';
 import Tables from './pages/Tables';
-import Alerts from './pages/UiElements/Alerts';
-import Buttons from './pages/UiElements/Buttons';
 import DefaultLayout from './layout/DefaultLayout';
 import Homepage from './UserLayout/components/Homepage';
-import Login from './pages/Form/FormLayout';
 import Contact from './UserLayout/components/Pages/Contact';
 import Aboutus from './UserLayout/components/Pages/Aboutus';
 import Recpies from './UserLayout/components/Pages/Recpies';
+import Login from './components/Admin/Login';
+import UserLayout from './layout/UserLayout';
+import { useAuth } from './hooks/useAuth';
+import Calendar from './pages/Calendar';
+import Settings from './pages/Settings';
+
+// Private Route Component for Users
+const UserPrivateRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { token, user } = useAuth();
+
+  return token && user?.role === 'user' ? (
+    <>{children}</>
+  ) : (
+    <Navigate to="/" replace />
+  );
+};
+
+// Private Route Component for Admins
+const AdminPrivateRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { token, user } = useAuth();
+
+  return token && user?.role === 'admin' ? (
+    <>{children}</>
+  ) : (
+    <Navigate to="/" replace />
+  );
+};
 
 function App() {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const { pathname } = useLocation();
+  const { token, user } = useAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -31,150 +55,131 @@ function App() {
     setTimeout(() => setLoading(false), 1000);
   }, []);
 
-  const handleLogin = true
-  return loading ? (
-    <Loader />
-  ) : (
-    <>
-    {!handleLogin ?
-    <FormLayout handleLogin={handleLogin}/>
-    : 
-    // <DefaultLayout> 
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (!token) {
+    return (
+      <UserLayout>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" index element={<Homepage/>} />
+          <Route
+            path="/admin/login"
+            element={
+              <>
+                <PageTitle title="Signin | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+                <Login />
+              </>
+            }
+          />
+          <Route
+            path="/auth/signin"
+            element={
+              <>
+                <PageTitle title="Signin | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+                <SignIn />
+              </>
+            }
+          />
+          <Route
+            path="/auth/signup"
+            element={
+              <>
+                <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+                <SignUp />
+              </>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </UserLayout>
+    );
+  }
+
+  if (token && user?.role === 'user') {
+    return (
+      <UserLayout>
+        {/* User Private Routes */}
+        <Routes>
+          <Route
+            path="/recipes"
+            element={
+              <UserPrivateRoute>
+                <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+                <Chart />
+              </UserPrivateRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </UserLayout>
+    );
+  }
+
+  return (
+    <DefaultLayout>
       <Routes>
-      <Route
-          index
-          element={
-            <>
-              
-              <ECommerce />
-            </>
-          }
-        />
+        {/* Admin Private Routes */}
         <Route
-          index
+          path="/admin/dashboard"
           element={
-            <>
+            <AdminPrivateRoute>
               <PageTitle title="eCommerce Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <ECommerce />
-            </>
+            </AdminPrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admin/users"
+          element={
+            <AdminPrivateRoute>
+              <PageTitle title="Tables | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <Tables />
+            </AdminPrivateRoute>
           }
         />
         <Route
-          path="/users/fe"
+          path="/admin/category"
           element={
-            <>
-              <Homepage />
-            </>
+            <AdminPrivateRoute>
+              <PageTitle title="Settings | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <Settings />
+            </AdminPrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/subcategory"
+          element={
+            <AdminPrivateRoute>
+              <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <Calendar />
+            </AdminPrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/recipes"
+          element={
+            <AdminPrivateRoute>
+              <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <Chart />
+            </AdminPrivateRoute>
           }
         />
         <Route
           path="/profile"
           element={
-            <>
+            <AdminPrivateRoute>
               <PageTitle title="Profile | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <Profile />
-            </>
+            </AdminPrivateRoute>
           }
         />
-        <Route
-          path="/admin/login"
-          element={
-            <>
-              <Login />
-            </>
-          }
-        />
-         <Route
-          path="/contact"
-          element={
-            <>
-              <Contact />
-            </>
-          }
-        />
-         <Route
-          path="/aboutus"
-          element={
-            <>
-              <Aboutus />
-            </>
-          }
-        />
-         <Route
-          path="/user-recpie"
-          element={
-            <>
-              <Recpies />
-            </>
-          }
-        />
-        <Route
-          path="/tables"
-          element={
-            <>
-              <PageTitle title="Tables | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Tables />
-            </>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <>
-              <PageTitle title="Settings | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              {/* <Settxings /> */}
-            </>
-          }
-        />
-        <Route
-          path="/recpies"
-          element={
-            <>
-              <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Chart />
-            </>
-          }
-        />
-        <Route
-          path="/ui/alerts"
-          element={
-            <>
-              <PageTitle title="Alerts | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Alerts />
-            </>
-          }
-        />
-        <Route
-          path="/ui/buttons"
-          element={
-            <>
-              <PageTitle title="Buttons | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Buttons />
-            </>
-          }
-        />
-        <Route
-          path="/auth/signin"
-          element={
-            <>
-              <PageTitle title="Signin | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <SignIn />
-            </>
-          }
-        />
-        <Route
-          path="/auth/signup"
-          element={
-            <>
-              <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <SignUp />
-            </>
-          }
-        />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    // </DefaultLayout>
-    }
-      </>
+    </DefaultLayout>
   );
 }
 
