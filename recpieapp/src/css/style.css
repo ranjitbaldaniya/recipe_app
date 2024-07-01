@@ -11,6 +11,74 @@
 @layer components {
 }
 
+.carousel .slide img {
+  filter: brightness(0.5); /* To add the dark overlay effect */
+}
+
+.carousel.carousel-slider
+{
+  height: 900px !important;
+}
+/* Navbar.css */
+
+.group:hover .group-hover\:block {
+  display: block;
+}
+
+.group:hover .group-hover\:hidden {
+  display: none;
+}
+.card-color
+{
+    background: linear-gradient(to right, #000, rgba(0, 0, 0, 0.1));
+}
+
+.carousel .legend {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.carousel .legend h2 {
+  margin: 0;
+  font-size: 2em;
+}
+
+.carousel .legend p {
+  margin: 10px 0;
+}
+
+.carousel .legend button {
+  background: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.carousel .control-arrow, .carousel.carousel-slider .control-arrow {
+  /* background: rgba(0, 0, 0, 0.2); */
+  color: white;
+}
+
+.carousel .control-prev.control-arrow:before {
+  border-right: 8px solid white;
+}
+
+.carousel .control-next.control-arrow:before {
+  border-left: 8px solid white;
+}
+
 @layer utilities {
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {

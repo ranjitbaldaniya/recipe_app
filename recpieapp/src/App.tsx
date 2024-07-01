@@ -6,9 +6,14 @@ import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
 import Chart from './pages/Chart';
 import ECommerce from './pages/Dashboard/ECommerce';
+import FormLayout from './pages/Form/FormLayout';
 import Profile from './pages/Profile';
 import Tables from './pages/Tables';
 import DefaultLayout from './layout/DefaultLayout';
+import Homepage from './UserLayout/components/Homepage';
+import Contact from './UserLayout/components/Pages/Contact';
+import Aboutus from './UserLayout/components/Pages/Aboutus';
+import Recpies from './UserLayout/components/Pages/Recpies';
 import Login from './components/Admin/Login';
 import UserLayout from './layout/UserLayout';
 import { useAuth } from './hooks/useAuth';
@@ -62,7 +67,7 @@ function App() {
       <UserLayout>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" index element={<h2>Home page</h2>} />
+          <Route path="/" index element={<Homepage/>} />
           <Route
             path="/admin/login"
             element={
