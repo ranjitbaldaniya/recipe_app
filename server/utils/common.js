@@ -20,14 +20,19 @@ export const createNestedCategories = async (categoryData, userId) => {
 
 
 
-
- export const getCategoryWithSubcategories = async (categoryId) => {
-
-  console.log("category id ==>" , categoryId)
-    const category = await Category.findById(categoryId).populate('subcategory').exec();
+  export const getCategoryWithSubcategories = async (categoryId) => {
+    const category = await Category.findOne({
+      _id: categoryId,
+      delete_at: { $exists: false }, // Only fetch if not soft deleted
+    }).populate('subcategory').exec();
+  
     if (!category) return null;
   
-    const subcategories = await Category.find({ subcategory: categoryId });
+    const subcategories = await Category.find({
+      subcategory: categoryId,
+      delete_at: { $exists: false }, // Only fetch if not soft deleted
+    });
+  
     const subcategoryDetails = await Promise.all(
       subcategories.map(sub => getCategoryWithSubcategories(sub._id))
     );
@@ -37,7 +42,6 @@ export const createNestedCategories = async (categoryData, userId) => {
       subcategories: subcategoryDetails
     };
   };
-  
 
 
 //   // Get all categories with nested subcategories
