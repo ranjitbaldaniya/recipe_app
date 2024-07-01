@@ -18,7 +18,10 @@ import Login from './components/Admin/Login';
 import UserLayout from './layout/UserLayout';
 import { useAuth } from './hooks/useAuth';
 import Calendar from './pages/Calendar';
-import Settings from './pages/Settings';
+import ListRecipe from './components/Admin/recipe/ListRecipe';
+import AddRecipe from './components/Admin/recipe/AddRecipe';
+import AddCategory from './components/Admin/category/AddCategory';
+import ListCategory from './components/Admin/category/ListCategory';
 
 // Private Route Component for Users
 const UserPrivateRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -142,11 +145,29 @@ function App() {
           }
         />
         <Route
-          path="/admin/category"
+          path="/admin/add-category"
           element={
             <AdminPrivateRoute>
               <PageTitle title="Settings | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Settings />
+              <AddCategory/>
+            </AdminPrivateRoute>
+          }
+        />
+         <Route
+          path="/admin/add-category/:id"
+          element={
+            <AdminPrivateRoute>
+              <PageTitle title="Settings | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <AddCategory/>
+            </AdminPrivateRoute>
+          }
+        />
+         <Route
+          path="/admin/list-category"
+          element={
+            <AdminPrivateRoute>
+              <PageTitle title="Settings | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <ListCategory/>
             </AdminPrivateRoute>
           }
         />
@@ -160,11 +181,21 @@ function App() {
           }
         />
         <Route
-          path="/admin/recipes"
+          path="/admin/list-recipe"
           element={
             <AdminPrivateRoute>
               <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Chart />
+              <ListRecipe />
+            </AdminPrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admin/add-recipe"
+          element={
+            <AdminPrivateRoute>
+              <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <AddRecipe />
             </AdminPrivateRoute>
           }
         />
