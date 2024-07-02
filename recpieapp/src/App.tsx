@@ -49,7 +49,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const { pathname } = useLocation();
   const { token, user } = useAuth();
-
+console.log(token , user)
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
@@ -67,7 +67,7 @@ function App() {
       <UserLayout>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" index element={<Homepage/>} />
+          <Route path="/" index element={<Homepage />} />
           <Route
             path="/admin/login"
             element={
@@ -92,6 +92,30 @@ function App() {
               <>
                 <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
                 <SignUp />
+              </>
+            }
+          />
+          <Route
+            path="/contact"
+            element={
+              <>
+                <Contact />
+              </>
+            }
+          />
+          <Route
+            path="/aboutus"
+            element={
+              <>
+                <Aboutus />
+              </>
+            }
+          />
+          <Route
+            path="/user-recpie"
+            element={
+              <>
+                <Recpies />
               </>
             }
           />
