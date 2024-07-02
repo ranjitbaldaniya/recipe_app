@@ -15,7 +15,7 @@ const ListCategory: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const {user , token} = useAuth()
+  const { user, token } = useAuth();
 
   useEffect(() => {
     fetchCategories();
@@ -43,9 +43,9 @@ const ListCategory: React.FC = () => {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
-        fetchCategories(); 
+        fetchCategories();
       } catch (error) {
         console.error('Error soft deleting category:', error);
       }
@@ -56,19 +56,13 @@ const ListCategory: React.FC = () => {
     navigate(`/admin/add-category/${id}`);
   };
 
-
   if (loading) return <div>Loading...</div>;
-
 
   const renderCategories = (categories: Category[], depth = 0) => {
     return categories.map((category) => (
-      <div
-        key={category._id}
-        style={{ marginLeft: depth * 20 }}
-   
-      >
+      <div key={category._id} style={{ marginLeft: depth * 20 }}>
         <div className="flex justify-between items-center p-2">
-          <div className='border-b border-gray-300'>
+          <div className="border-b border-gray-300">
             {category.name} - Status: {category.status ? 'Active' : 'Inactive'}
           </div>
           <div>
@@ -97,12 +91,12 @@ const ListCategory: React.FC = () => {
 
   return (
     <div>
-     
       <div className="mb-4 flex justify-between">
-      <h2 className="text-2xl">List Categories</h2>
-        <button className="mt-5 p-3 border rounded-md">
-          <Link to="/admin/add-category">Add Category</Link>
-        </button>
+        <h2 className="text-2xl">List Categories</h2>
+        <Link to="/admin/add-category">
+          {' '}
+          <button className="mt-5 p-3 border rounded-md">Add Category</button>
+        </Link>
       </div>
       <div>
         {loading ? (

@@ -1,5 +1,5 @@
 import { Category } from "../models/categoryModel.js";
-import { getCategoryWithSubcategories } from "../utils/common.js";
+import { getCategoryWithSubcategories, getCategoryWithSubcategories1 } from "../utils/common.js";
 
 // Create a new category
 export const createCategory = async (req, res) => {
@@ -23,7 +23,7 @@ export const getCategories = async (req, res) => {
     // Build the hierarchy for each top-level category
     const categoriesWithHierarchy = await Promise.all(
       topLevelCategories.map((category) =>
-        getCategoryWithSubcategories(category._id)
+      getCategoryWithSubcategories(category._id)
       )
     );
 
