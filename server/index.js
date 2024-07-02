@@ -6,6 +6,8 @@ import userRoutes from "./routes/userRoute.js";
 import authRoute from "./routes/authRoute.js";
 import recipeRoute from "./routes/recipeRoute.js";
 import categoryRoute from "./routes/categoryRoute.js";
+import favoriteRoute from "./routes/favoriteRoute.js";
+import reviewRoute from "./routes/reviewRoute.js";
 dotenv.config();
 
 const app = express();
@@ -22,7 +24,8 @@ app.use("/auth", authRoute);
 app.use("/users", userRoutes);
 app.use("/recipe", recipeRoute);
 app.use("/category", categoryRoute);
-
+app.use("/favorite", favoriteRoute);
+app.use("/review", reviewRoute);
 
 const PORT = process.env.PORT || 3001;
 
