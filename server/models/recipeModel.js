@@ -17,7 +17,6 @@ const RecipeSchema = new Schema({
   video_url: { type: String },
   status: { type: Boolean, default: true },
   approved: { type: Boolean, default: false },
-  user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   create_at: { type: Date, default: Date.now },
   update_at: { type: Date, default: Date.now },
   create_by: { type: Schema.Types.ObjectId, ref: 'User' },

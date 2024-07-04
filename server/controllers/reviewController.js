@@ -3,6 +3,7 @@ import { Review } from "../models/reviewModel.js";
 //create review route
 export const createReview = async (req, res) => {
   try {
+    console.log("review -->" , req.body)
     const { user_id, recipe_id, rating, review } = req.body;
     const newReview = new Review({ user_id, recipe_id, rating, review });
     await newReview.save();

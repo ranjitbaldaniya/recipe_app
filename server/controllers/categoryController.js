@@ -18,7 +18,7 @@ export const createCategory = async (req, res) => {
 export const getCategories = async (req, res) => {
   try {
     // Fetch all top-level categories (those with subcategory: null)
-    const topLevelCategories = await Category.find({ subcategory: null });
+    const topLevelCategories = await Category.find({ subcategory: null, delete_at: null });
     // console.log("top leve category ==>", topLevelCategories);
     // Build the hierarchy for each top-level category
     const categoriesWithHierarchy = await Promise.all(
