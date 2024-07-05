@@ -82,7 +82,7 @@ export const createRecipe = async (req, res) => {
 export const getRecipes = async (req, res) => {
   try {
 
-    console.log("req.body ==>" , req.body)
+    // console.log("req.body ==>" , req.body)
     // Get the query parameters
     const { pageIndex, pageSize, category } = req.query;
 

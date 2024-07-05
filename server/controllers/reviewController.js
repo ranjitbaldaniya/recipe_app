@@ -3,12 +3,13 @@ import { Review } from "../models/reviewModel.js";
 //create review route
 export const createReview = async (req, res) => {
   try {
-    console.log("review -->" , req.body)
+    console.log("review -->", req.body);
     const { user_id, recipe_id, rating, review } = req.body;
     const newReview = new Review({ user_id, recipe_id, rating, review });
     await newReview.save();
     res.status(201).json(newReview);
   } catch (err) {
+    console.log("error while creating review ", err);
     res.status(400).json({ error: err.message });
   }
 };
@@ -42,13 +43,13 @@ export const updateReview = async (req, res) => {
   }
 };
 
-//delete review 
+//delete review
 export const deleteReview = async (req, res) => {
-    try {
-      const { id } = req.params;
-      await Review.findByIdAndDelete(id);
-      res.status(200).json({ message: "Review deleted" });
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
+  try {
+    const { id } = req.params;
+    await Review.findByIdAndDelete(id);
+    res.status(200).json({ message: "Review deleted" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
+};
