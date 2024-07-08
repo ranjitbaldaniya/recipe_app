@@ -32,6 +32,7 @@ const Navbar: React.FC = () => {
   
     try {
       const response: any = await axios.post('http://localhost:3001/auth/login', formData);
+      console.log("res", response)
       if (response.data && response.data.token) {
         notify(response.data.message, { type: 'success' });
         setTimeout(()=>{
@@ -170,74 +171,6 @@ console.log(data)
             >
               MEGA MENU
             </button>
-            {/* {isMegaMenuOpen && (
-              <div className="absolute left-0 mt-2 w-full bg-white text-gray-900 shadow-lg">
-                <div className="container mx-auto py-4 px-8">
-                  <div className="grid grid-cols-3 gap-8">
-                    <div>
-                      <h3 className="font-semibold mb-2">Category 1</h3>
-                      <ul>
-                        <li>
-                          <NavLink to="#" className="hover:text-gray-600">
-                            Link 1
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink to="#" className="hover:text-gray-600">
-                            Link 2
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink to="#" className="hover:text-gray-600">
-                            Link 3
-                          </NavLink>
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Category 2</h3>
-                      <ul>
-                        <li>
-                          <NavLink to="#" className="hover:text-gray-600">
-                            Link 1
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink to="#" className="hover:text-gray-600">
-                            Link 2
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink to="#" className="hover:text-gray-600">
-                            Link 3
-                          </NavLink>
-                        </li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Category 3</h3>
-                      <ul>
-                        <li>
-                          <NavLink to="#" className="hover:text-gray-600">
-                            Link 1
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink to="#" className="hover:text-gray-600">
-                            Link 2
-                          </NavLink>
-                        </li>
-                        <li>
-                          <NavLink to="#" className="hover:text-gray-600">
-                            Link 3
-                          </NavLink>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )} */}
           </li>
           <li>
             <NavLink
