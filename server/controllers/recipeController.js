@@ -70,64 +70,67 @@ export const createRecipe = async (req, res) => {
   }
 };
 
-// Get all recipes
-// export const getRecipes = async (req, res) => {
-//   try {
-//     const recipes = await Recipe.find();
-//     res.json(recipes);
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
 export const getRecipes = async (req, res) => {
   try {
-
-    // console.log("req.body ==>" , req.body)
-    // Get the query parameters
     const { pageIndex, pageSize, category } = req.query;
 
-    // Create the filter object
     let filter = {};
     if (category) {
       filter.category = category;
     }
-   
 
-    // Parse pagination parameters
     const pageIndexInt = parseInt(pageIndex) || 1;
     const pageSizeInt = parseInt(pageSize) || 0;
 
     const startIndex = (pageIndexInt - 1) * pageSizeInt;
 
-    // Fetch the total count of recipes
     const totalRecipes = await Recipe.countDocuments(filter);
 
-    // Fetch the filtered recipes with pagination
     const recipes = await Recipe.find(filter)
       .skip(pageSizeInt ? startIndex : 0)
       .limit(pageSizeInt);
 
-    // Create pagination info
     const pagination = {};
     if (pageSizeInt && startIndex + pageSizeInt < totalRecipes) {
       pagination.next = {
         pageIndex: pageIndexInt + 1,
-        pageSize: pageSizeInt
+        pageSize: pageSizeInt,
       };
     }
     if (pageSizeInt && startIndex > 0) {
       pagination.prev = {
         pageIndex: pageIndexInt - 1,
-        pageSize: pageSizeInt
+        pageSize: pageSizeInt,
       };
     }
 
+    const recipeIds = recipes.map(recipe => recipe._id);
+
+    const reviews = await Review.find({ recipe_id: { $in: recipeIds } })
+      .populate("user_id")
+      .lean();
+
+    const reviewMap = {};
+    reviews.forEach(review => {
+      if (!reviewMap[review.recipe_id]) {
+        reviewMap[review.recipe_id] = [];
+      }
+      reviewMap[review.recipe_id].push(review);
+    });
+
+    const recipesWithReviews = recipes.map(recipe => {
+      return {
+        ...recipe.toObject(),
+        reviews: reviewMap[recipe._id] || []
+      };
+    });
+
     res.json({
-      recipes: recipes,
+      recipes: recipesWithReviews,
       pagination: pagination,
       totalRecipes: totalRecipes,
       totalPages: pageSizeInt ? Math.ceil(totalRecipes / pageSizeInt) : 1,
-      currentPage: pageSizeInt ? pageIndexInt : 1
+      currentPage: pageSizeInt ? pageIndexInt : 1,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
