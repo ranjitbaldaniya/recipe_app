@@ -4,7 +4,7 @@ import subscribBackground from '../../images/bg-img/bg1.jpg'
 const Subscribe = () => {
   return (
     <>
-      <div className=" mx-40">
+      <div className='mx-10'>
         <div className="flex gap-10">
           <div className=" border-8 border-green-500 p-10">
             <span className="text-5xl italic mb-8 text-[#40ba37] flex justify-center">"</span>
