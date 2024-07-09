@@ -253,7 +253,7 @@ function App() {
             </AdminPrivateRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
       </Routes>
     </DefaultLayout>
   );

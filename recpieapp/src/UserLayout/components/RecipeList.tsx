@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 const RecipeList = () => {
     const [recipe, setRecipe] = useState<any>();
@@ -11,14 +12,16 @@ console.log(recipe)
     useEffect(() => {
         getRecipe()
     }, [])
+
+    const navigate = useNavigate()
     return (
         <>
             <div className="container mx-auto py-20">
-                <div className="grid grid-cols-3 gap-10">
+                <div className="grid grid-cols-3 gap-10" >
                     {recipe?.map((item: any) => (
-                        <div className='flex gap-4'>
+                        <div className='flex gap-4' onClick={() => navigate(`/recipe/details/${item._id}`)}>
                             <div className='w-30 h-30 overflow-hidden'>
-                                <img src={item.images} className='w-full h-auto object-cover' />
+                                <img src={`http://localhost:3001/${item.images}`} className='w-full h-auto object-cover' />
                             </div>
 
                             <div>
