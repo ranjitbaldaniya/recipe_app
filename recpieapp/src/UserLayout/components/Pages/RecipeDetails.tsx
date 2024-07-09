@@ -7,7 +7,6 @@ import { useFetch } from '../../../hooks/useFetch';
 import axios from 'axios';
 import { useAuth } from '../../../hooks/useAuth';
 import { useParams } from 'react-router-dom';
-import Header from '../Header';
 import Navbar from '../Navbar';
 
 const RecipeDetails: React.FC = () => {
@@ -16,7 +15,7 @@ const RecipeDetails: React.FC = () => {
   const url = `http://localhost:3001/recipe/details/${param.id}`;
   const { user } = useAuth();
   console.log("user ==>" , user)
-  const { data, loading, error } = useFetch<RecipeDetailsResponse>(url);
+  const { data, loading, error, refetch } = useFetch<RecipeDetailsResponse>(url);
   const [rating, setRating] = useState<number | null>(null);
   const [comment, setComment] = useState<string>('');
   const [showAllReviews, setShowAllReviews] = useState<boolean>(false);
@@ -50,7 +49,7 @@ const RecipeDetails: React.FC = () => {
       setRating(null);
       setComment('');
       setSubmitting(false);
-      // refetch(); // Refetch data to include the new review
+      refetch();
     } catch (err) {
       console.error(err);
       setSubmitting(false);
