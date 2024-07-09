@@ -56,13 +56,10 @@ export const createRecipe = async (req, res) => {
       create_by,
     });
 
-    // Save the recipe to the database
     const savedRecipe = await newRecipe.save();
 
-    // Respond with the saved recipe data
     res.status(201).json(savedRecipe);
   } catch (error) {
-    // Handle errors
     console.error("Error creating recipe:", error);
     res
       .status(500)
@@ -78,7 +75,7 @@ export const getRecipes = async (req, res) => {
     if (category) {
       filter.category = category;
     }
-
+    //pagination code
     const pageIndexInt = parseInt(pageIndex) || 1;
     const pageSizeInt = parseInt(pageSize) || 0;
 
