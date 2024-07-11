@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply font-satoshi font-normal text-base text-body bg-whiten relative z-1;
+    /* @apply font-satoshi font-normal text-base text-body bg-whiten relative z-1; */
   }
 }
 
@@ -30,14 +30,14 @@
 }
 .card-color
 {
-    background: linear-gradient(to right, #000, rgba(0, 0, 0, 0.1));
+    /* background: linear-gradient(to right, #000, rgba(0, 0, 0, 0.1)); */
 }
 
 .carousel .legend {
   position: absolute;
   bottom: 20px;
   left: 20px;
-  background: rgba(0, 0, 0, 0.5);
+  /* background: rgba(0, 0, 0, 0.5); */
   color: white;
   padding: 20px;
   border-radius: 5px;

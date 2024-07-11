@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import logo from '../../../public/logo.png';
 import axios from 'axios';
@@ -11,7 +11,8 @@ const Navbar: React.FC = () => {
   const [isSignUpPopupOpen, setSignUpPopupOpen] = useState(false);
   const [isProfileOpen, setProfileOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(true)
-  const [userName,setUserName]=useState();
+  const [userName,setUserName]=useState(localStorage.getItem('user_name'));
+  const [category,setCategory]=useState();
   const [formSignUpData, setFormSignUpData] = useState({
     user_name: '',
     email: '',
@@ -51,6 +52,13 @@ const user_name= localStorage.getItem('user_name')
     }
   };
 
+  const getCategory=async()=>{
+    const response=await axios.get('http://localhost:3001/category')
+    setCategory(response.data)
+  }
+  useEffect(()=>{
+    getCategory()
+  },[])
   const handleSignOut = () => {
     setShowLogin(true)
     localStorage.removeItem('user_name')
@@ -114,7 +122,7 @@ const user_name= localStorage.getItem('user_name')
             </li>
             <li>
               <NavLink
-                to="/"
+                to="/aboutus"
                 className="hover:text-green-500 text-sm font-semibold text-[#474747]"
               >
                 ABOUT US
@@ -122,7 +130,7 @@ const user_name= localStorage.getItem('user_name')
             </li>
             <li>
               <NavLink
-                to="/"
+                to="/contact"
                 className="hover:text-green-500 text-sm font-semibold text-[#474747]"
               >
                 CONTACT US
@@ -138,7 +146,6 @@ const user_name= localStorage.getItem('user_name')
                 </button>
               </li>}
 
-            {/* profile section */}
             {user_name &&
               <li className="relative group">
                 <button
@@ -166,83 +173,22 @@ const user_name= localStorage.getItem('user_name')
               </li>}
           </ul>
         </div>
-        {/* mega menu */}
         {isMegaMenuOpen && (
-          <div className="absolute z-10 grid grid-cols-5 w-[97%]  text-sm bg-white">
-            <div className="p-4 pb-0  md:pb-4 ">
-              <ul className="space-y-4 text-md text-black" >
-                <li className=''>
-                  About Us
-                </li>
-                <li>
-                  Library
-                </li>
-                <li>
-                  Resources
-                </li>
-                <li>
-                  Pro Version
-                </li>
+          <div className="absolute z-10  w-[97%]  text-sm bg-white shadow-5">
+            <div className="p-4 pb-0  md:pb-4 flex justify-around">
+            {category?.map((category:any) => (
+            <div key={category._id} className="p-4 pb-0 md:pb-4">
+              <h3 className="text-md font-bold text-black mb-4">{category.name}</h3>
+              <ul className="space-y-4 text-md text-black">
+                {category.subcategories.map((sub:any) => (
+                  <li key={sub._id} className='cursor-pointer'>{sub.name}</li>
+                ))}
               </ul>
             </div>
-            <div className="p-4 pb-0  md:pb-4 ">
-              <ul className="space-y-4 text-md text-black">
-                <li>
-                  Blog
-                </li>
-                <li>
-                  Newsletter
-                </li>
-                <li>
-                  Playground
-                </li>
-                <li>
-                  License
-                </li>
-              </ul>
-            </div>
-            <div className="p-4 pb-0  md:pb-4 ">
-              <ul className="space-y-4 text-md text-black">
-                <li>
-                  Contact Us
-                </li>
-                <li>
-                  Support Center
-                </li>
-                <li>
-                  Terms
-                </li>
-              </ul>
-            </div>
-            <div className="p-4 pb-0  md:pb-4">
-              <ul className="space-y-4 text-md text-black">
-                <li>
-                  Contact Us
-                </li>
-                <li>
-                  Support Center
-                </li>
-                <li>
-                  Terms
-                </li>
-              </ul>
-            </div>
-            <div className="p-4  md:pb-4">
-              <ul className="space-y-4 text-md text-black">
-                <li>
-                  Contact Us
-                </li>
-                <li>
-                  Support Center
-                </li>
-                <li>
-                  Terms
-                </li>
-              </ul>
+          ))}
             </div>
           </div>
         )}
-        {/* Login page */}
         {isLoginPopupOpen && (
           <div className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div className="relative p-4 w-full max-w-md max-h-full">
@@ -357,7 +303,6 @@ const user_name= localStorage.getItem('user_name')
             </div>
           </div>
         )}
-          {/* sign up page */}
         {isSignUpPopupOpen && (
           <div className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div className="relative p-4 w-full max-w-md max-h-full">
