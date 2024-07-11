@@ -137,13 +137,31 @@ export const getRecipes = async (req, res) => {
 // Get a recipe by ID
 export const getRecipeById = async (req, res) => {
   try {
-    const recipe = await Recipe.findById(req.params.id).populate("category");
+    const recipe = await Recipe.findById(req.params.id)
+      .populate({
+        path: 'category',
+        select: '_id name'
+      })
+      .lean();
+
     if (!recipe) return res.status(404).json({ message: "Recipe not found" });
+
+    const reviews = await Review.find({ recipe_id: req.params.id })
+      .populate({
+        path: 'user_id',
+        select: '_id name'
+      })
+      .select('review rating -_id')
+      .lean();
+
+    recipe.reviews = reviews;
     res.json(recipe);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
+
 
 // Update a recipe by ID
 export const updateRecipe = async (req, res) => {

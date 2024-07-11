@@ -23,6 +23,8 @@ import AddRecipe from './components/Admin/recipe/AddRecipe';
 import AddCategory from './components/Admin/category/AddCategory';
 import ListCategory from './components/Admin/category/ListCategory';
 import RecipeDetails from './UserLayout/components/Pages/RecipeDetails';
+import Footer from './UserLayout/components/Footer';
+import Navbar from './UserLayout/components/Navbar';
 
 // Private Route Component for Users
 const UserPrivateRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -130,6 +132,18 @@ function App() {
               </>
             }
           />
+             <Route
+          path="/add-recipe"
+          element={
+            <>
+              <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <Navbar />
+              <AddRecipe />
+              <Footer />
+              </>
+          }
+        />
+
           <Route
             path="/recipe/details/:id"
             element={
