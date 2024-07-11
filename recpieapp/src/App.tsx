@@ -124,7 +124,7 @@ function App() {
           />
           {/* recipe details route which is going to be private in user deshboard */}
           <Route
-            path="/recipe/details/"
+            path="/recipe/details"
             element={
               <>
                 <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
@@ -267,7 +267,7 @@ function App() {
             </AdminPrivateRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
       </Routes>
     </DefaultLayout>
   );

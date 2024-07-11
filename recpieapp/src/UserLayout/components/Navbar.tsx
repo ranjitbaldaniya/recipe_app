@@ -4,8 +4,11 @@ import logo from '../../../public/logo.png';
 import axios from 'axios';
 import { FaUserCircle } from 'react-icons/fa';
 import { notify } from '../../common/Toast';
+import { useAuth } from '../../hooks/useAuth';
 
 const Navbar: React.FC = () => {
+  const {login , logout} = useAuth();
+
   const [isMegaMenuOpen, setMegaMenuOpen] = useState(false);
   const [isLoginPopupOpen, setLoginPopupOpen] = useState(false);
   const [isSignUpPopupOpen, setSignUpPopupOpen] = useState(false);
@@ -54,6 +57,7 @@ useEffect(() => {
       [name]: value,
     }));
   };
+
   const handleLoginSubmit = async (e: any) => {
     e.preventDefault();
     setLoginPopupOpen(false);
@@ -61,7 +65,11 @@ useEffect(() => {
 
     try {
       const response: any = await axios.post('http://localhost:3001/auth/login', formData);
-      if (response.data && response.data.token) {
+     
+      const {user  ,token } = response.data;
+      if (token) {
+        login(user, token);
+
         notify(response.data.message, { type: 'success' });
         localStorage.setItem('user_name', response.data.user.user_name)
         setUserName(response.data.user.user_name)
@@ -80,6 +88,7 @@ useEffect(() => {
     getCategory()
   },[])
   const handleSignOut = () => {
+    logout()
     setShowLogin(true)
     localStorage.removeItem('user_name')
     setProfileOpen(false)

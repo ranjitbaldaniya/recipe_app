@@ -29,7 +29,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   const login = (user: User, token: string) => {
-    console.log('login call ==>', user, token);
+    // console.log('login call ==>', user, token);
     setUser(user);
     setToken(token);
 

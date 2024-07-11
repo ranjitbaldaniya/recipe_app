@@ -10,7 +10,7 @@ import axios from 'axios';
 import { useAuth } from '../../../hooks/useAuth';
 
 const Recpies = () => {
-  const url = 'http://localhost:3001/recipe/details/6683de580debc75f2826ae48';
+  const url = 'http://localhost:3001/recipe/details/6687d81dbb394d8b32228e68';
   const { user } = useAuth();
   const { data, loading, error, refetch } = useFetch<RecipeDetailsResponse>(url);
   const [rating, setRating] = useState<number | null>(null);
@@ -74,17 +74,17 @@ const Recpies = () => {
                 April 05, 2018
               </span>
               <h2 className="text-4xl font-bold text-[#474747] mb-8">
-                Vegetarian cheese salad
+              {data?.recipe.recipe_name_eng}
               </h2>
               <div className="recipe-duration border-l-4 border-[#1c8314] pl-4 py-3">
                 <h6 className="text-sm mb-2 text-black font-bold text-[16px]">
-                  Prep: 15 mins
+                  Prep: {data?.recipe.preparation_time}
                 </h6>
                 <h6 className="text-sm mb-2 text-black font-bold text-[16px]">
-                  Cook: 30 mins
+                  Cook: {data?.recipe.cooking_time}
                 </h6>
                 <h6 className="text-sm text-black font-bold text-[16px]">
-                  Yields: 8 Servings
+                  Yields: {data?.recipe.num_of_people_to_served} Servings
                 </h6>
               </div>
             </div>
@@ -105,7 +105,7 @@ const Recpies = () => {
                 href="#"
                 className="mt-4 inline-block min-w-[160px] h-[60px] text-white border-l-4 border-[#1c8314] rounded-none px-[30px] text-lg leading-[58px] font-semibold transition duration-500 capitalize bg-green-500"
               >
-                For Beginners
+                For {data?.recipe.difficulty_level}
               </a>
             </div>
           </div>
@@ -115,7 +115,7 @@ const Recpies = () => {
           <div className="w-full lg:w-2/3 mb-8 lg:mb-0">
             {/* Single Preparation Step */}
             <div className="single-preparation-step flex mb-12">
-              <h4 className="text-gray-700 flex-none w-15 mb-0 text-[#474747] text-[1.5rem] font-bold">
+              {/* <h4 className="text-gray-700 flex-none w-15 mb-0 text-[#474747] text-[1.5rem] font-bold">
                 01.
               </h4>
               <p className="text-gray-500 text-base leading-loose font-normal text-[14px]">
@@ -125,48 +125,13 @@ const Recpies = () => {
                 tortor enim. Phasellus posuere vestibulum ipsum, eget lobortis
                 purus. Orci varius natoque penatibus et magnis dis parturient
                 montes, nascetur ridiculus mus.
-              </p>
+              </p> */}
+              <div
+            className="prose prose-sm text-[#474747]"
+            dangerouslySetInnerHTML={{ __html: data?.recipe.recipe_steps_eng }}
+          />
             </div>
-            {/* Repeat similar structure for other steps */}
-            <div className="single-preparation-step flex mb-12">
-              <h4 className="text-gray-700 flex-none w-15 mb-0 text-[#474747] text-[1.5rem] font-bold">
-                02.
-              </h4>
-              <p className="text-gray-500 text-base leading-loose font-normal text-[14px]">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Vestibulum nec varius dui. Suspendisse potenti. Vestibulum ac
-                pellentesque tortor. Aenean congue sed metus in iaculis. Cras a
-                tortor enim. Phasellus posuere vestibulum ipsum, eget lobortis
-                purus. Orci varius natoque penatibus et magnis dis parturient
-                montes, nascetur ridiculus mus.
-              </p>
-            </div>
-            <div className="single-preparation-step flex mb-12">
-              <h4 className="text-gray-700 flex-none w-15 mb-0 text-[#474747] text-[1.5rem] font-bold">
-                03.
-              </h4>
-              <p className="text-gray-500 text-base leading-loose font-normal text-[14px]">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Vestibulum nec varius dui. Suspendisse potenti. Vestibulum ac
-                pellentesque tortor. Aenean congue sed metus in iaculis. Cras a
-                tortor enim. Phasellus posuere vestibulum ipsum, eget lobortis
-                purus. Orci varius natoque penatibus et magnis dis parturient
-                montes, nascetur ridiculus mus.
-              </p>
-            </div>
-            <div className="single-preparation-step flex mb-12">
-              <h4 className="text-gray-700 flex-none w-15 mb-0 text-[#474747] text-[1.5rem] font-bold">
-                04.
-              </h4>
-              <p className="text-gray-500 text-base leading-loose font-normal text-[14px]">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Vestibulum nec varius dui. Suspendisse potenti. Vestibulum ac
-                pellentesque tortor. Aenean congue sed metus in iaculis. Cras a
-                tortor enim. Phasellus posuere vestibulum ipsum, eget lobortis
-                purus. Orci varius natoque penatibus et magnis dis parturient
-                montes, nascetur ridiculus mus.
-              </p>
-            </div>
+       
           </div>
 
           {/* Ingredients */}
@@ -175,25 +140,8 @@ const Recpies = () => {
               <h4 className="text-gray-700 mb-8 text-[#474747] text-[1.5rem] font-bold">
                 Ingredients
               </h4>
-              <div className="custom-control mb-8 flex items-center pl-10">
-                <input
-                  type="checkbox"
-                  className="custom-control-input"
-                  id="customCheck1"
-                />
-                <label
-                  //       formData.append('file', blob, 'download.pdf');
-                  //       await fetch(`your-api`, {
-                  //         method: 'POST',
-                  //         body: formData,
-                  //       });
-                  //         return formData;ssName="custom-control-label ml-2 font-bold text-[16px] text-[#474747]"
-                  htmlFor="customCheck1"
-                >
-                  4 Tbsp (57 gr) butter
-                </label>
-              </div>
-              <div className="custom-control mb-8 flex items-center pl-10">
+       
+              {/* <div className="custom-control mb-8 flex items-center pl-10">
                 <input
                   type="checkbox"
                   className="custom-control-input"
@@ -205,85 +153,11 @@ const Recpies = () => {
                 >
                   2 large eggs
                 </label>
-              </div>
-              <div className="custom-control mb-8 flex items-center pl-10">
-                <input
-                  type="checkbox"
-                  className="custom-control-input"
-                  id="customCheck3"
-                />
-                <label
-                  className="custom-control-label ml-2 font-bold text-[16px] text-[#474747]"
-                  htmlFor="customCheck3"
-                >
-                  2 yogurt containers granulated sugar
-                </label>
-              </div>
-              <div className="custom-control mb-8 flex items-center pl-10">
-                <input
-                  type="checkbox"
-                  className="custom-control-input"
-                  id="customCheck4"
-                />
-                <label
-                  className="custom-control-label ml-2 font-bold text-[16px] text-[#474747]"
-                  htmlFor="customCheck4"
-                >
-                  1 vanilla or plain yogurt, 170g container
-                </label>
-              </div>
-              <div className="custom-control mb-8 flex items-center pl-10">
-                <input
-                  type="checkbox"
-                  className="custom-control-input"
-                  id="customCheck5"
-                />
-                <label
-                  className="custom-control-label ml-2 font-bold text-[16px] text-[#474747]"
-                  htmlFor="customCheck5"
-                >
-                  2 yogurt containers unbleached white flour
-                </label>
-              </div>
-              <div className="custom-control mb-8 flex items-center pl-10">
-                <input
-                  type="checkbox"
-                  className="custom-control-input"
-                  id="customCheck6"
-                />
-                <label
-                  className="custom-control-label ml-2 font-bold text-[16px] text-[#474747]"
-                  htmlFor="customCheck6"
-                >
-                  1.5 yogurt containers milk
-                </label>
-              </div>
-              <div className="custom-control mb-8 flex items-center pl-10">
-                <input
-                  type="checkbox"
-                  className="custom-control-input"
-                  id="customCheck7"
-                />
-                <label
-                  className="custom-control-label ml-2 font-bold text-[16px] text-[#474747]"
-                  htmlFor="customCheck7"
-                >
-                  1/4 tsp cinnamon
-                </label>
-              </div>
-              <div className="custom-control mb-8 flex items-center pl-10">
-                <input
-                  type="checkbox"
-                  className="custom-control-input"
-                  id="customCheck8"
-                />
-                <label
-                  className="custom-control-label ml-2 font-bold text-[16px] text-[#474747]"
-                  htmlFor="customCheck8"
-                >
-                  1 cup fresh blueberries
-                </label>
-              </div>
+              </div> */}
+               <div
+            className="prose prose-sm text-[#474747]"
+            dangerouslySetInnerHTML={{ __html: data?.recipe.ingredients_eng }}
+          />
             </div>
           </div>
         </div>

@@ -16,11 +16,15 @@ export const createRecipe = async (req, res) => {
       recipe_steps_guj,
       category,
       num_of_people_to_served,
+      cooking_time,
+      preparation_time,
+      difficulty_level,
       video_url,
       status,
       create_by,
+      approved
     } = req.body;
-
+console.log("req body ==>" , req.body)
     // Check if req.file exists (assuming multer middleware is configured properly)
     const images = req.file ? req.file.path : "";
 
@@ -50,10 +54,14 @@ export const createRecipe = async (req, res) => {
       recipe_steps_guj,
       category,
       num_of_people_to_served,
+      cooking_time,
+      preparation_time,
+      difficulty_level,
       images,
       video_url,
       status,
       create_by,
+      approved
     });
 
     const savedRecipe = await newRecipe.save();

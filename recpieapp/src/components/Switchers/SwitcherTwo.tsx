@@ -18,9 +18,9 @@ const SwitcherTwo = () => {
               setEnabled(!enabled);
             }}
           />
-          <div className="h-5 w-14 rounded-full bg-meta-9 shadow-inner dark:bg-[#5A616B]"></div>
+          <div className="h-5 w-14 rounded-full bg-bodydark shadow-inner dark:bg-[#5A616B]"></div>
           <div
-            className={`dot absolute left-0 -top-1 h-7 w-7 rounded-full bg-white shadow-switch-1 transition ${
+            className={`dot absolute left-0 -top-1 h-7 w-7 rounded-full bg-blue-900 shadow-switch-1 transition ${
               enabled && '!right-0 !translate-x-full !bg-primary dark:!bg-white'
             }`}
           ></div>

@@ -15,7 +15,7 @@ export const useFetch = <T,>(url: string) => {
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("use fetch res==>", response);
+      // console.log("use fetch res==>", response);
       setData(response.data);
     } catch (err: any) {
       setError(err.message);
@@ -30,7 +30,6 @@ export const useFetch = <T,>(url: string) => {
 
   return { data, loading, error, refetch: fetchData };
 
-  return { data, loading, error, refetch : fetchData};
 };
 
 
