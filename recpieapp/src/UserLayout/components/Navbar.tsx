@@ -30,8 +30,29 @@ const Navbar: React.FC = () => {
     role: 'user',
   });
 const user_name= localStorage.getItem('user_name')
-
 const modalRef = useRef<HTMLDivElement>(null);
+const CategoryItem = ({ category, level = 0 }:any) => {
+  return (
+    <div key={category._id} className="p-4 pb-0 md:pb-4">
+      <h3
+        className={`text-md mb-4 ${
+          level === 0 ? 'font-bold text-black' : 'font-normal text-gray-700'
+        }`}
+      >
+        {category.name}
+      </h3>
+      {category.subcategories && category.subcategories.length > 0 && (
+        <ul className="text-md">
+          {category.subcategories.map((sub:any) => (
+            <li key={sub._id} className="cursor-pointer">
+              <CategoryItem category={sub} level={level + 1} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
 
 useEffect(() => {
   const handleClickOutside = (event: MouseEvent) => {
@@ -205,15 +226,8 @@ useEffect(() => {
         {isMegaMenuOpen && (
           <div className="absolute z-10  w-[97%]  shadow-2xl text-sm bg-white">
             <div ref={modalRef} className="relative p-4 pb-0  md:pb-4 flex justify-around">
-            {category?.map((category:any) => (
-            <div key={category._id} className="p-4 pb-0 md:pb-4">
-              <h3 className="text-md font-bold text-black mb-4">{category.name}</h3>
-              <ul className="space-y-4 text-md text-black">
-                {category.subcategories.map((sub:any) => (
-                  <li key={sub._id} className='cursor-pointer'>{sub.name}</li>
-                ))}
-              </ul>
-            </div>
+          {category.map((cat:any) => (
+            <CategoryItem key={cat._id} category={cat} />
           ))}
             </div>
           </div>
