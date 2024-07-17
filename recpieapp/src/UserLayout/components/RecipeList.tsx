@@ -2,12 +2,14 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { faHeart, faHeartBroken, faHeartCircleBolt, faStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
+import { FaHeart, FaHeartbeat, FaRegHeart } from 'react-icons/fa';
 
 interface Review {
     rating: number;
     review: string;
+    favorite:number;
 }
 
 interface Recipe {
@@ -17,6 +19,7 @@ interface Recipe {
     recipe_name_eng: string;
     reviews: Review[];
     userRating?: number;
+    userFavorite?:boolean;
 }
 
 const RecipeList = () => {
@@ -31,10 +34,49 @@ const RecipeList = () => {
             console.error("Error fetching recipes:", error);
         }
     };
+    // const [rating, setRating] = useState<number | null>(null);
+
+    // const handleRatingChange = (newRating: number) => {
+    //     setRating(newRating);
+    //   };
 
     useEffect(() => {
         getRecipes();
     }, []);
+
+    // const handleFavoriteChange = async (recipeId: string) => {
+    //     try {
+    //         const updatedRecipes = recipes.map(recipe => {
+    //             if (recipe._id === recipeId) {
+    //                 return {
+    //                     ...recipe,
+    //                     userFavorite: !recipe.userFavorite
+    //                 };
+    //             }
+    //             return recipe;
+    //         });
+    //         setRecipes(updatedRecipes);
+
+    //         // Example: Update favorite status on server using axios
+    //         await axios.put(`http://localhost:3001/recipe/${recipeId}`, {
+    //             userFavorite: updatedRecipes.find(recipe => recipe._id === recipeId)?.userFavorite
+    //         });
+    //     } catch (error) {
+    //         console.error("Error updating favorite status:", error);
+    //     }
+    // };
+
+    const handleFavoriteChange = (recipeId: string) => {
+        setRecipes(prevRecipes => prevRecipes.map(recipe => {
+            if (recipe._id === recipeId) {
+                return {
+                    ...recipe,
+                    userFavorite: !recipe.userFavorite  // Toggle userFavorite for the clicked recipe
+                };
+            }
+            return recipe;
+        }));
+    };
 
     return (
         <div className="container mx-auto py-20">
@@ -74,7 +116,26 @@ const RecipeList = () => {
                                     />
                                 ))}
                             </div>
-                            <p className="text-lg font-normal">{item.reviews[0]?.review}</p>
+                            {/* {[1].map((star) => (
+                <FontAwesomeIcon
+                  key={star}
+                  icon={rating ? faHeart : faStarEmpty}  // Display faHeart if rated (rating is truthy), otherwise display faStarEmpty
+                  className="text-yellow-500 cursor-pointer "
+                  onClick={() => handleRatingChange(!rating as any)}  // Toggle the rating when clicked
+
+                />
+              ))} */}
+              {item.userFavorite ? (
+                                <FaHeart
+                                    className="text-red-500 cursor-pointer"
+                                    onClick={() => handleFavoriteChange(item._id)}
+                                />
+                            ) : (
+                                <FaRegHeart
+                                    className="text-red-500 cursor-pointer"
+                                    onClick={() => handleFavoriteChange(item._id)}
+                                />
+                            )}
                         </div>
                     </div>
                 ))}

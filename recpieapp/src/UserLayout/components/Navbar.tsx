@@ -219,7 +219,7 @@ const Navbar: React.FC = () => {
                   <ul className="absolute right-0   w-48 bg-white text-gray-900 shadow-lg z-1">
                     <div   ref={modalRef} className='relative'>
                     <div className="px-4  py-3">
-                      <span className="block hover:bg-gray-200 text-blue-600 font-bold">{userName} </span>
+                      <span className="block hover:bg-gray-200 text-green-500 font-bold">{userName} </span>
                     </div>
                     <li>
                       <NavLink to='/myrecipe'
@@ -227,6 +227,14 @@ const Navbar: React.FC = () => {
                         className="block hover:bg-gray-200 px-4 py-2 "
                       >
                         My Recipe
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink to='/favorites'
+                      onClick={()=>setProfileOpen(false)}
+                        className="block hover:bg-gray-200 px-4 py-2 "
+                      >
+                       Favorites
                       </NavLink>
                     </li>
 
@@ -248,7 +256,7 @@ const Navbar: React.FC = () => {
           <div className="absolute z-10  w-[97%]  shadow-2xl text-sm bg-white">
             <nav className="desktop-nav flex justify-center items-center">
               <ul className="menus">
-                {transformedCategoryItems.map((menu: any, index: any) => {
+                {transformedCategoryItems?.map((menu: any, index: any) => {
                   return <MenuItems items={menu} key={index} depthLevel={0} />;
                 })}
               </ul>

@@ -27,6 +27,7 @@ import Footer from './UserLayout/components/Footer';
 import Navbar from './UserLayout/components/Navbar';
 import MyRecipe from './UserLayout/components/MyRecipe';
 import AddUserRecipe from './UserLayout/components/AddUserRecipe';
+import MyFavorite from './UserLayout/components/MyFavorite';
 
 // Private Route Component for Users
 const UserPrivateRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -71,7 +72,12 @@ function App() {
       <UserLayout>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" index element={<Homepage />} />
+          <Route path="/" index element={
+            <>
+            <PageTitle title="Home page" />
+            <Homepage />
+            </>
+            } />
           <Route
             path="/admin/login"
             element={
@@ -103,6 +109,7 @@ function App() {
             path="/contact"
             element={
               <>
+                <PageTitle title="Contact" />
                 <Contact />
               </>
             }
@@ -111,6 +118,7 @@ function App() {
             path="/aboutus"
             element={
               <>
+               <PageTitle title="About" />
                 <Aboutus />
               </>
             }
@@ -119,6 +127,7 @@ function App() {
             path="/user-recpie"
             element={
               <>
+                <PageTitle title="Recipe" />
                 <Recpies />
               </>
             }
@@ -128,7 +137,7 @@ function App() {
             path="/recipe/details"
             element={
               <>
-                <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+                <PageTitle title="Recipe Detail" />
                 <Recpies />
               </>
             }
@@ -144,11 +153,17 @@ function App() {
       <UserLayout>
         {/* User Private Routes */}
         <Routes>
-        <Route path="/" index element={<Homepage />} />
+        <Route path="/" index element={
+           <>
+           <PageTitle title="Home page" />
+           <Homepage />
+           </>
+           } />
         <Route
             path="/contact"
             element={
               <>
+               <PageTitle title="Contact" />
                 <Contact />
               </>
             }
@@ -157,6 +172,7 @@ function App() {
             path="/aboutus"
             element={
               <>
+               <PageTitle title="About" />
                 <Aboutus />
               </>
             }
@@ -165,18 +181,29 @@ function App() {
             path="/recipes"
             element={
               <UserPrivateRoute>
-                <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+                <PageTitle title="Recipe" />
                 <Chart />
               </UserPrivateRoute>
             }
           />
- <Route
+        <Route
           path="/myrecipe"
           element={
             <>
-              <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <PageTitle title="My Recipe" />
               <Navbar />
               <MyRecipe />
+              <Footer />
+              </>
+          }
+        />
+         <Route
+          path="/favorites"
+          element={
+            <>
+              <PageTitle title="Favorites" />
+              <Navbar />
+              <MyFavorite />
               <Footer />
               </>
           }
@@ -185,7 +212,7 @@ function App() {
           path="/add-recipe"
           element={
             <>
-              <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <PageTitle title="Add Recipe" />
               <Navbar />
               <AddUserRecipe />
               <Footer />
@@ -197,7 +224,7 @@ function App() {
             path="/recipe/details/:id"
             element={
               <>
-                <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+                <PageTitle title="Recipe Details" />
                 <RecipeDetails />
               </>
             }

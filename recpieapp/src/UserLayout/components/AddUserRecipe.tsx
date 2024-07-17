@@ -5,6 +5,8 @@ import 'react-quill/dist/quill.snow.css';
 import { useAuth } from '../../hooks/useAuth';
 import SwitcherTwo from '../../components/Switchers/SwitcherTwo';
 import { useLocation } from 'react-router-dom';
+import { notify } from '../../common/Toast';
+
 
 interface IFormInput {
   recipe_name_eng: string;
@@ -144,9 +146,13 @@ const AddUserRecipe: React.FC = () => {
           },
         },
       );
+      notify('Recipe added successfully', { type: 'success' });
+
 
       console.log('Recipe added successfully:', response.data);
     } catch (error) {
+      notify('Something went wrong', { type: 'error' });
+
       console.error('Error adding recipe:', error);
     }
   };
@@ -202,9 +208,12 @@ const AddUserRecipe: React.FC = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      notify('Recipe updated successfully', { type: 'success' });
+
   console.log(formValues)
         console.log('Recipe updated successfully:', response.data); // Check updated data here
     } catch (error) {
+      notify('Something went wrong', { type: 'error' });
       console.error('Error updating recipe:', error);
     }
   };

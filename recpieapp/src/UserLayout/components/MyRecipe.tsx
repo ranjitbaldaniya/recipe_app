@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom"
+import { notify } from '../../common/Toast';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 interface Review {
     rating: number;
@@ -17,6 +19,7 @@ interface Recipe {
     recipe_name_eng: string;
     reviews: Review[];
     userRating?: number;
+    userFavorite?:boolean;
 }
 
 const MyRecipe = () => {
@@ -62,11 +65,23 @@ const MyRecipe = () => {
     const handleDelete = async (_id: string) => {   
         try {
              await axios.delete(`http://localhost:3001/recipe/${_id}`)
-            setRecipes((prevRecipes) => prevRecipes.filter((recipe) => recipe._id !== _id));            
+            setRecipes((prevRecipes) => prevRecipes.filter((recipe) => recipe._id !== _id));
+            notify('Deleted successfully', { type: 'success' });
         } catch (error) {
-            
         }
     }
+
+    const handleFavoriteChange = (recipeId: string) => {
+        setRecipes(prevRecipes => prevRecipes.map(recipe => {
+            if (recipe._id === recipeId) {
+                return {
+                    ...recipe,
+                    userFavorite: !recipe.userFavorite  // Toggle userFavorite for the clicked recipe
+                };
+            }
+            return recipe;
+        }));
+    };
 
     useEffect(() => {
         getUserRecipesList();
@@ -126,7 +141,20 @@ const MyRecipe = () => {
                             onClick={()=>handleEditClick(item)}
                             >  <FontAwesomeIcon icon={faEdit} /></button>
                         </p>
-                        <p className='py-5'>
+                        <p>
+                        {item.userFavorite ? (
+                                <FaHeart
+                                    className="text-red-500 cursor-pointer my-2"
+                                    onClick={() => handleFavoriteChange(item._id)}
+                                />
+                            ) : (
+                                <FaRegHeart
+                                    className="text-red-500 cursor-pointer my-2"
+                                    onClick={() => handleFavoriteChange(item._id)}
+                                />
+                            )}
+                        </p>
+                        <p className=''>
 
                             <button onClick={()=>handleDelete(item._id)}>  <FontAwesomeIcon icon={faTrashAlt} /></button>
                         </p>
