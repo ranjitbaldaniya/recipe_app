@@ -69,7 +69,13 @@ const RecipeDetails: React.FC = () => {
           <div className="w-full md:w-2/3">
             <div className="recipe-headline my-5">
               <span className="text-m block text-gray-500 mb-0 ">
-                April 05, 2018
+                 <p className="text-xs text-[#40ba37] font-normal">
+                  {new Date(data?.recipe?.create_at!).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                  })}
+                </p>
               </span>
               <h2 className="text-4xl font-bold text-[#474747] mb-8">
               {data?.recipe.recipe_name_eng}

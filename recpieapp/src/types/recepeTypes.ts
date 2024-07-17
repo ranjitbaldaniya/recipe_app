@@ -14,7 +14,7 @@ export interface Review {
     _id: string;
     user_id: User;
     recipe_id: string;
-    rating: any;
+    rating: number;
     review: string;
 }
 

@@ -61,6 +61,7 @@ const Navbar: React.FC = () => {
         setLoginPopupOpen(false);
         setSignUpPopupOpen(false);
         setMegaMenuOpen(false)
+        setProfileOpen(false)
 
       }
     };
@@ -216,8 +217,8 @@ const Navbar: React.FC = () => {
                   <FaUserCircle size={25} />
                 </button>
                 {isProfileOpen && (
-                  <ul className="absolute right-0   w-48 bg-white text-gray-900 shadow-lg z-1">
-                    <div   ref={modalRef} className='relative'>
+                  <ul className="absolute right-0 w-48 bg-white text-gray-900 shadow-lg z-1">
+                    <div ref={modalRef} className='relative'>
                     <div className="px-4  py-3">
                       <span className="block hover:bg-gray-200 text-green-500 font-bold">{userName} </span>
                     </div>
@@ -254,6 +255,7 @@ const Navbar: React.FC = () => {
         </div>
         {isMegaMenuOpen && (
           <div className="absolute z-10  w-[97%]  shadow-2xl text-sm bg-white">
+            <div ref={modalRef}>
             <nav className="desktop-nav flex justify-center items-center">
               <ul className="menus">
                 {transformedCategoryItems?.map((menu: any, index: any) => {
@@ -261,6 +263,7 @@ const Navbar: React.FC = () => {
                 })}
               </ul>
             </nav>
+           </div>
 
           </div>
         )}

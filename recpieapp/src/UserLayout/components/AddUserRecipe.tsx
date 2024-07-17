@@ -4,7 +4,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useAuth } from '../../hooks/useAuth';
 import SwitcherTwo from '../../components/Switchers/SwitcherTwo';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { notify } from '../../common/Toast';
 
 
@@ -39,6 +39,7 @@ interface Category {
 const AddUserRecipe: React.FC = () => {
   const { token, user } = useAuth();
   const { state } = useLocation();
+  const navigate = useNavigate()
   const recipe = state?.recipe;
   const [activeTab, setActiveTab] = useState<'eng' | 'hindi' | 'guj'>('eng');
   const [status, setStatus] = useState<boolean>(false);
@@ -128,9 +129,9 @@ const AddUserRecipe: React.FC = () => {
       formData.append('cooking_time', formValues.cooking_time);
       formData.append('preparation_time', formValues.preparation_time);
       formData.append('difficulty_level', formValues.difficulty_level);
-      formData.append('status', status as any);
+      formData.append('status', status.toString());
       formData.append('create_by', user!.id);
-      formData.append('approved', formValues.approved as any);
+      formData.append('approved', String(formValues.approved));
 
       if (formValues.images) {
         formData.append('images', formValues.images);
@@ -146,6 +147,7 @@ const AddUserRecipe: React.FC = () => {
           },
         },
       );
+      navigate('/myrecipe')
       notify('Recipe added successfully', { type: 'success' });
 
 
@@ -209,7 +211,9 @@ const AddUserRecipe: React.FC = () => {
         },
       });
       notify('Recipe updated successfully', { type: 'success' });
-
+      if(response.data){
+       navigate('./myrecipe')
+       }
   console.log(formValues)
         console.log('Recipe updated successfully:', response.data); // Check updated data here
     } catch (error) {

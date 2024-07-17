@@ -28,6 +28,7 @@ import Navbar from './UserLayout/components/Navbar';
 import MyRecipe from './UserLayout/components/MyRecipe';
 import AddUserRecipe from './UserLayout/components/AddUserRecipe';
 import MyFavorite from './UserLayout/components/MyFavorite';
+import NotFound from './UserLayout/components/NotFound';
 
 // Private Route Component for Users
 const UserPrivateRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -142,7 +143,7 @@ function App() {
               </>
             }
           />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/notfound"  element={<NotFound />} />
         </Routes>
       </UserLayout>
     );
@@ -229,7 +230,7 @@ function App() {
               </>
             }
           />
-          <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/notfound"  element={<NotFound />} />
         </Routes>
       </UserLayout>
     );

@@ -82,13 +82,13 @@ const AddRecipe: React.FC = () => {
       formData.append('ingredients_eng', formValues.ingredients_eng);
       formData.append('recipe_steps_eng', formValues.recipe_steps_eng);
 
-      formData.append('recipe_name_hindi', formValues.recipe_name_hindi);
-      formData.append('ingredients_hindi', formValues.ingredients_hindi);
-      formData.append('recipe_steps_hindi', formValues.recipe_steps_hindi);
+      formData.append('recipe_name_hindi', formValues.recipe_name_hindi!);
+      formData.append('ingredients_hindi', formValues.ingredients_hindi!);
+      formData.append('recipe_steps_hindi', formValues.recipe_steps_hindi!);
 
-      formData.append('recipe_name_guj', formValues.recipe_name_guj);
-      formData.append('ingredients_guj', formValues.ingredients_guj);
-      formData.append('recipe_steps_guj', formValues.recipe_steps_guj);
+      formData.append('recipe_name_guj', formValues.recipe_name_guj!);
+      formData.append('ingredients_guj', formValues.ingredients_guj!);
+      formData.append('recipe_steps_guj', formValues.recipe_steps_guj!);
 
       formData.append('category', formValues.category);
       formData.append(
@@ -98,9 +98,9 @@ const AddRecipe: React.FC = () => {
       formData.append('cooking_time', formValues.cooking_time);
       formData.append('preparation_time', formValues.preparation_time);
       formData.append('difficulty_level', formValues.difficulty_level);
-      formData.append('status', status);
-      formData.append('create_by', user.id);
-      formData.append('approved', formValues.approved);
+      formData.append('status', status.toString());
+      formData.append('create_by', user!.id);
+      formData.append('approved', String(formValues.approved));
 
       if (formValues.images) {
         formData.append('images', formValues.images);

@@ -41,7 +41,7 @@ const ListCategory: React.FC = () => {
       try {
         await axios.put(
           `http://localhost:3001/category/soft-delete/${id}`,
-          { userId: user.id },
+          { userId: user!.id },
           {
             headers: {
               'Content-Type': 'application/json',
