@@ -21,7 +21,6 @@ interface Recipe {
 
 const RecipeList = () => {
     const [recipes, setRecipes] = useState<Recipe[]>([]);
-    console.log(recipes)
     const navigate = useNavigate();
 
     const getRecipes = async () => {

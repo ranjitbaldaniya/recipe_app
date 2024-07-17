@@ -4,7 +4,7 @@ import { PiInstagramLogoDuotone } from 'react-icons/pi';
 const Footer = () => {
   return (
     <>
-      <div className="container mx-auto py-10 flex justify-center items-center gap-20">
+      <div className="container mx-auto py-10 lg:flex md:flex justify-center items-center gap-20">
         <div className="flex gap-5">
           <PiInstagramLogoDuotone />
           <PiInstagramLogoDuotone />

@@ -60,6 +60,7 @@ useEffect(() => {
       setLoginPopupOpen(false);
       setSignUpPopupOpen(false);
       setMegaMenuOpen(false)
+      setProfileOpen(false)
       
     }
   };
@@ -206,9 +207,18 @@ useEffect(() => {
                 </button>
                 {isProfileOpen && (
                   <ul className="absolute right-0   w-48 bg-white text-gray-900 shadow-lg z-1">
-                    <div className="px-4 hover:bg-gray-200 py-3">
+                    <div   ref={modalRef} className='relative'>
+                    <div className="px-4  py-3">
                       <span className="block hover:bg-gray-200 text-blue-600 font-bold">{userName} </span>
                     </div>
+                    <li>
+                      <NavLink to='/myrecipe'
+                      onClick={()=>setProfileOpen(false)}
+                        className="block hover:bg-gray-200 px-4 py-2 "
+                      >
+                        My Recipe
+                      </NavLink>
+                    </li>
 
                     <li>
                       <button
@@ -218,6 +228,7 @@ useEffect(() => {
                         Logout
                       </button>
                     </li>
+                    </div>
                   </ul>
                 )}
               </li>}

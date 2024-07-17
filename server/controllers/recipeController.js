@@ -77,13 +77,14 @@ console.log("req body ==>" , req.body)
 
 export const getRecipes = async (req, res) => {
   try {
-    const { pageIndex, pageSize, category } = req.query;
-
+    const { pageIndex, pageSize, category, userId } = req.query;
     let filter = {};
     if (category) {
       filter.category = category;
     }
-    //pagination code
+    if (userId) {
+      filter.create_by = userId;
+    }
     const pageIndexInt = parseInt(pageIndex) || 1;
     const pageSizeInt = parseInt(pageSize) || 0;
 
@@ -110,7 +111,6 @@ export const getRecipes = async (req, res) => {
     }
 
     const recipeIds = recipes.map(recipe => recipe._id);
-
     const reviews = await Review.find({ recipe_id: { $in: recipeIds } })
       .populate("user_id")
       .lean();
@@ -140,7 +140,7 @@ export const getRecipes = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
+};;
 
 // Get a recipe by ID
 export const getRecipeById = async (req, res) => {
@@ -172,14 +172,37 @@ export const getRecipeById = async (req, res) => {
 
 
 // Update a recipe by ID
+// export const updateRecipe = async (req, res) => {
+//   try {
+//     const recipe = await Recipe.findByIdAndUpdate(req.params.id, req.body, {
+//       new: true,
+//     });
+//     console.log(recipe)
+//     if (!recipe) return res.status(404).json({ message: "Recipe not found" });
+//     res.json(recipe);
+//   } catch (err) {
+//     res.status(400).json({ message: err.message });
+//   }
+// };
 export const updateRecipe = async (req, res) => {
+  const { id } = req.params;
+  const { body } = req;
   try {
-    const recipe = await Recipe.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!recipe) return res.status(404).json({ message: "Recipe not found" });
-    res.json(recipe);
+    // Check if req.file exists (assuming multer middleware is configured properly)
+    const images = req.file ? req.file.path : "";
+    // Update only the fields that are part of the request body
+    const updatedRecipe = await Recipe.findByIdAndUpdate(
+      id,
+      { ...body, images }, // Merge body and images path
+      { new: true }
+    );
+    if (!updatedRecipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+    console.log("Updated recipe:", updatedRecipe); // Check the updated recipe object
+    res.json(updatedRecipe); // Send the updated recipe back to the client
   } catch (err) {
+    console.error("Error updating recipe:", err);
     res.status(400).json({ message: err.message });
   }
 };

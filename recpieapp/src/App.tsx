@@ -25,6 +25,8 @@ import ListCategory from './components/Admin/category/ListCategory';
 import RecipeDetails from './UserLayout/components/Pages/RecipeDetails';
 import Footer from './UserLayout/components/Footer';
 import Navbar from './UserLayout/components/Navbar';
+import MyRecipe from './UserLayout/components/MyRecipe';
+import AddUserRecipe from './UserLayout/components/AddUserRecipe';
 
 // Private Route Component for Users
 const UserPrivateRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -52,7 +54,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const { pathname } = useLocation();
   const { token, user } = useAuth();
-  // console.log(token , user)
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
@@ -132,13 +133,61 @@ function App() {
               </>
             }
           />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </UserLayout>
+    );
+  }
+
+  if (token && user?.role === 'user') {
+    return (
+      <UserLayout>
+        {/* User Private Routes */}
+        <Routes>
+        <Route path="/" index element={<Homepage />} />
+        <Route
+            path="/contact"
+            element={
+              <>
+                <Contact />
+              </>
+            }
+          />
+          <Route
+            path="/aboutus"
+            element={
+              <>
+                <Aboutus />
+              </>
+            }
+          />
+          <Route
+            path="/recipes"
+            element={
+              <UserPrivateRoute>
+                <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+                <Chart />
+              </UserPrivateRoute>
+            }
+          />
+ <Route
+          path="/myrecipe"
+          element={
+            <>
+              <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <Navbar />
+              <MyRecipe />
+              <Footer />
+              </>
+          }
+        />
              <Route
           path="/add-recipe"
           element={
             <>
               <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <Navbar />
-              <AddRecipe />
+              <AddUserRecipe />
               <Footer />
               </>
           }
@@ -159,27 +208,6 @@ function App() {
     );
   }
 
-  if (token && user?.role === 'user') {
-    return (
-      <UserLayout>
-        {/* User Private Routes */}
-        <Routes>
-          <Route
-            path="/recipes"
-            element={
-              <UserPrivateRoute>
-                <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-                <Chart />
-              </UserPrivateRoute>
-            }
-          />
-
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </UserLayout>
-    );
-  }
-
   return (
     <DefaultLayout>
       <Routes>
@@ -193,7 +221,6 @@ function App() {
             </AdminPrivateRoute>
           }
         />
-
         <Route
           path="/admin/users"
           element={

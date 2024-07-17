@@ -14,7 +14,7 @@ const FollowInstagram = () => {
 
         Follow Us Instragram
         </p>
-        <div className="flex w-54">
+        <div className="lg:flex md:flex w-54">
             <img src={Insta1} className=' hover:opacity-50 bg-green-400 hover:cursor-pointer'/>
             <img src={Insta2} className=' hover:opacity-50 bg-green-400 hover:cursor-pointer'/>
             <img src={Insta3} className=' hover:opacity-50 bg-green-400 hover:cursor-pointer'/>
@@ -22,8 +22,6 @@ const FollowInstagram = () => {
             <img src={Insta5} className=' hover:opacity-50 bg-green-400 hover:cursor-pointer'/>
             <img src={Insta6} className=' hover:opacity-50 bg-green-400 hover:cursor-pointer'/>
             <img src={Insta7} className=' hover:opacity-50 bg-green-400 hover:cursor-pointer'/>
-
-
         </div>
 
     </div>

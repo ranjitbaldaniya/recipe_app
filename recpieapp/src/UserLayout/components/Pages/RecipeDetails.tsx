@@ -5,16 +5,12 @@ import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import { RecipeDetailsResponse } from '../../../types/recepeTypes';
 import { useFetch } from '../../../hooks/useFetch';
 import axios from 'axios';
-import { useAuth } from '../../../hooks/useAuth';
 import { useParams } from 'react-router-dom';
 import Navbar from '../Navbar';
 
 const RecipeDetails: React.FC = () => {
   const param = useParams();
-  console.log("id " , param.id)
   const url = `http://localhost:3001/recipe/details/${param.id}`;
-  const { user } = useAuth();
-  console.log("user ==>" , user)
   const { data, loading, error, refetch } = useFetch<RecipeDetailsResponse>(url);
   const [rating, setRating] = useState<number | null>(null);
   const [comment, setComment] = useState<string>('');
@@ -25,8 +21,8 @@ const RecipeDetails: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   const averageRating =
-    data?.reviews.reduce((acc, review) => acc + Number(review.rating), 0) /
-    data?.reviews.length;
+    data?.reviews?.reduce((acc, review) => acc + Number(review.rating), 0)! /
+    data?.reviews?.length!;
 
   const handleRatingChange = (newRating: number) => {
     setRating(newRating);
@@ -130,7 +126,7 @@ const RecipeDetails: React.FC = () => {
               </p> */}
               <div
             className="prose prose-sm text-[#474747]"
-            dangerouslySetInnerHTML={{ __html: data?.recipe.recipe_steps_eng }}
+            dangerouslySetInnerHTML={{ __html: data?.recipe.recipe_steps_eng! }}
           />
             </div>
        
@@ -158,7 +154,7 @@ const RecipeDetails: React.FC = () => {
               </div> */}
                <div
             className="prose prose-sm text-[#474747]"
-            dangerouslySetInnerHTML={{ __html: data?.recipe.ingredients_eng }}
+            dangerouslySetInnerHTML={{ __html: data?.recipe.ingredients_eng! }}
           />
             </div>
           </div>
@@ -204,7 +200,8 @@ const RecipeDetails: React.FC = () => {
               >
                 <div className="p-2 bg-gray-100">
                   <h3 className="text-lg font-semibold text-[#474747]">
-                    {review.user_id.user_name}
+                    {/* {review.user_id.user_name} */}
+                    {review.user_id ? review.user_id.user_name : ''}
                   </h3>
                   <p>
                     {Array.from({ length: 5 }, (_, index) => (
@@ -219,7 +216,7 @@ const RecipeDetails: React.FC = () => {
                 </div>
               </div>
             ))}
-            {!showAllReviews && data?.reviews.length > 3 && (
+            {!showAllReviews && data?.reviews.length! > 3 && (
               <button
                 className="mt-4 px-6 py-2 bg-[#1c8314] text-white font-bold rounded-lg"
                 onClick={() => setShowAllReviews(true)}

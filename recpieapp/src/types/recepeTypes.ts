@@ -14,7 +14,7 @@ export interface Review {
     _id: string;
     user_id: User;
     recipe_id: string;
-    rating: string;
+    rating: any;
     review: string;
 }
 
@@ -25,6 +25,9 @@ export interface Recipe {
     recipe_steps_eng: string;
     category: string;
     num_of_people_to_served: number;
+    cooking_time:number;
+    preparation_time:number;
+    difficulty_level:string;
     images: string;
     status: boolean;
     approved: boolean;

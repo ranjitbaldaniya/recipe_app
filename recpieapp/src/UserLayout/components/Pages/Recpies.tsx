@@ -22,8 +22,8 @@ const Recpies = () => {
   if (error) return <div>Error: {error}</div>;
 
   const averageRating =
-    data?.reviews.reduce((acc, review) => acc + Number(review.rating), 0) /
-    data?.reviews.length;
+    data?.reviews.reduce((acc, review) => acc + Number(review.rating), 0)! /
+    data?.reviews.length!;
 
   const handleRatingChange = (newRating: number) => {
     setRating(newRating);
@@ -128,7 +128,7 @@ const Recpies = () => {
               </p> */}
               <div
             className="prose prose-sm text-[#474747]"
-            dangerouslySetInnerHTML={{ __html: data?.recipe.recipe_steps_eng }}
+            dangerouslySetInnerHTML={{ __html: data?.recipe.recipe_steps_eng! }}
           />
             </div>
        
@@ -156,7 +156,7 @@ const Recpies = () => {
               </div> */}
                <div
             className="prose prose-sm text-[#474747]"
-            dangerouslySetInnerHTML={{ __html: data?.recipe.ingredients_eng }}
+            dangerouslySetInnerHTML={{ __html: data?.recipe.ingredients_eng! }}
           />
             </div>
           </div>
@@ -217,7 +217,7 @@ const Recpies = () => {
                 </div>
               </div>
             ))}
-            {!showAllReviews && data?.reviews.length > 3 && (
+            {!showAllReviews && data?.reviews.length! > 3 && (
               <button
                 className="mt-4 px-6 py-2 bg-[#1c8314] text-white font-bold rounded-lg"
                 onClick={() => setShowAllReviews(true)}
