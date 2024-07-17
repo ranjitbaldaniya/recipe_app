@@ -5,17 +5,19 @@ import axios from 'axios';
 import { FaUserCircle } from 'react-icons/fa';
 import { notify } from '../../common/Toast';
 import { useAuth } from '../../hooks/useAuth';
+import MenuItems from './Pages/MenuItems';
+
 
 const Navbar: React.FC = () => {
-  const {login , logout} = useAuth();
+  const { login, logout } = useAuth();
 
   const [isMegaMenuOpen, setMegaMenuOpen] = useState(false);
   const [isLoginPopupOpen, setLoginPopupOpen] = useState(false);
   const [isSignUpPopupOpen, setSignUpPopupOpen] = useState(false);
   const [isProfileOpen, setProfileOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(true)
-  const [userName,setUserName]=useState(localStorage.getItem('user_name'));
-  const [category,setCategory]=useState<any>();
+  const [userName, setUserName] = useState(localStorage.getItem('user_name'));
+  const [category, setCategory] = useState<any>();
   const [formSignUpData, setFormSignUpData] = useState({
     user_name: '',
     email: '',
@@ -29,50 +31,48 @@ const Navbar: React.FC = () => {
     password: '',
     role: 'user',
   });
-const user_name= localStorage.getItem('user_name')
-const modalRef = useRef<HTMLDivElement>(null);
-const CategoryItem = ({ category, level = 0 }: any) => {
-  return (
-    <div key={category._id} className="p-4 pb-0 md:pb-4">
-      <h3
-        className={`text-md mb-4 ${level === 0 ? 'font-bold text-black' : 'font-normal text-gray-700'
-          }`}
-      >
-        {category.name}
-      </h3>
-      {category.subcategories && category.subcategories.length > 0 && (
-        <ul className="text-md">
-          {category.subcategories?.map((sub: any) => (
-            <li key={sub._id} className="cursor-pointer">
-              <CategoryItem category={sub} level={level + 1} />
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-};
-
-
-useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-      setLoginPopupOpen(false);
-      setSignUpPopupOpen(false);
-      setMegaMenuOpen(false)
-      setProfileOpen(false)
-      
-    }
+  const user_name = localStorage.getItem('user_name')
+  const modalRef = useRef<HTMLDivElement>(null);
+  const CategoryItem = ({ category, level = 0 }: any) => {
+    return (
+      <div key={category._id} className="p-4 pb-0 md:pb-4">
+        <h3
+          className={`text-md mb-4 ${level === 0 ? 'font-bold text-black' : 'font-normal text-gray-700'
+            }`}
+        >
+          {category.name}
+        </h3>
+        {category.subcategories && category.subcategories.length > 0 && (
+          <ul className="text-md">
+            {category.subcategories?.map((sub: any) => (
+              <li key={sub._id} className="cursor-pointer">
+                <CategoryItem category={sub} level={level + 1} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
   };
 
-  document.addEventListener('mousedown', handleClickOutside);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        setLoginPopupOpen(false);
+        setSignUpPopupOpen(false);
+        setMegaMenuOpen(false)
 
-  return () => {
-    document.removeEventListener('mousedown', handleClickOutside);
-  };
-}, []);
+      }
+    };
 
- const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
@@ -87,8 +87,8 @@ useEffect(() => {
 
     try {
       const response: any = await axios.post('http://localhost:3001/auth/login', formData);
-     
-      const {user  ,token } = response.data;
+
+      const { user, token } = response.data;
       if (token) {
         login(user, token);
 
@@ -102,13 +102,13 @@ useEffect(() => {
     }
   };
 
-  const getCategory=async()=>{
-    const response=await axios.get('http://localhost:3001/category')
+  const getCategory = async () => {
+    const response = await axios.get('http://localhost:3001/category')
     setCategory(response.data)
   }
-  useEffect(()=>{
+  useEffect(() => {
     getCategory()
-  },[])
+  }, [])
   const handleSignOut = () => {
     logout()
     setShowLogin(true)
@@ -130,10 +130,10 @@ useEffect(() => {
       if (response.data && response.data.token) {
         notify(response.data.message, { type: 'success' });
         setUserName(response.data.user.user_name)
-        setShowLogin(false)     
+        setShowLogin(false)
       }
     } catch (error) {
-      notify('Error SignUp in:',{type : 'error'});
+      notify('Error SignUp in:', { type: 'error' });
     }
   };
 
@@ -144,6 +144,16 @@ useEffect(() => {
       [name]: value
     }));
   };
+
+  const transformCategoryData = (categories: any) => {
+    return categories?.map((category: { _id:any; name: string; subcategories: any; }) => ({
+      id:category._id,
+      title: category.name,
+      url: `/${category.name.toLowerCase().replace(/\s+/g, '-')}`,
+      submenu: category.subcategories ? transformCategoryData(category.subcategories) : []
+    }));
+  };
+  const transformedCategoryItems = transformCategoryData(category);
 
   return (
     <>
@@ -236,11 +246,14 @@ useEffect(() => {
         </div>
         {isMegaMenuOpen && (
           <div className="absolute z-10  w-[97%]  shadow-2xl text-sm bg-white">
-            <div ref={modalRef} className="relative p-4 pb-0  md:pb-4 flex justify-around">
-          {category.map((category:any) => (
-            <CategoryItem key={category._id} category={category} />
-          ))}
-            </div>
+            <nav className="desktop-nav flex justify-center items-center">
+              <ul className="menus">
+                {transformedCategoryItems.map((menu: any, index: any) => {
+                  return <MenuItems items={menu} key={index} depthLevel={0} />;
+                })}
+              </ul>
+            </nav>
+
           </div>
         )}
         {isLoginPopupOpen && (
