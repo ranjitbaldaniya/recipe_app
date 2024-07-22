@@ -2,14 +2,14 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart, faHeartBroken, faHeartCircleBolt, faStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
-import { FaHeart, FaHeartbeat, FaRegHeart } from 'react-icons/fa';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 interface Review {
     rating: number;
     review: string;
-    favorite:number;
+    favorite: number;
 }
 
 interface Recipe {
@@ -19,12 +19,15 @@ interface Recipe {
     recipe_name_eng: string;
     reviews: Review[];
     userRating?: number;
-    userFavorite?:boolean;
+    userFavorite?: boolean;
 }
 
 const RecipeList = () => {
     const [recipes, setRecipes] = useState<Recipe[]>([]);
+    const [favorites, setFavorites] = useState<string[]>([]);
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('user') as any);
+    const id = user;
 
     const getRecipes = async () => {
         try {
@@ -34,49 +37,50 @@ const RecipeList = () => {
             console.error("Error fetching recipes:", error);
         }
     };
-    // const [rating, setRating] = useState<number | null>(null);
 
-    // const handleRatingChange = (newRating: number) => {
-    //     setRating(newRating);
-    //   };
+    const getFavorites = async () => {
+        try {
+            const userId = id;
+            const response = await axios.get(`http://localhost:3001/favorite/user/${userId}`);
+            setFavorites(response.data.map((fav: { recipe_id: { _id: string } }) => fav.recipe_id._id));
+        } catch (error) {
+            console.error("Error fetching favorites:", error);
+        }
+    };
+
+    const getFavoriteId = async (recipeId: string) => {
+        try {
+            const userId = id;
+            const response = await axios.get(`http://localhost:3001/favorite/user/${userId}`);
+            const favorite = response.data.find((fav: { recipe_id: { _id: string } }) => fav.recipe_id._id! === recipeId!);
+            return favorite?._id;
+        } catch (error) {
+            console.error("Error fetching favorite ID:", error);
+        }
+    };
+
+    const handleFavoriteClick = async (recipeId: string) => {
+        try {
+            const userId = id; // Replace with actual user ID
+            if (favorites.includes(recipeId)) {
+                const favoriteId = await getFavoriteId(recipeId);
+                if (favoriteId) {
+                    await axios.delete(`http://localhost:3001/favorite/${favoriteId}`);
+                    setFavorites(favorites.filter(fav => fav !== recipeId));
+                }
+            } else {
+                await axios.post('http://localhost:3001/favorite', { user_id: userId, recipe_id: recipeId });
+                setFavorites([...favorites, recipeId]);
+            }
+        } catch (error) {
+            console.error("Error updating favorite:", error);
+        }
+    };
 
     useEffect(() => {
         getRecipes();
+        getFavorites();
     }, []);
-
-    // const handleFavoriteChange = async (recipeId: string) => {
-    //     try {
-    //         const updatedRecipes = recipes.map(recipe => {
-    //             if (recipe._id === recipeId) {
-    //                 return {
-    //                     ...recipe,
-    //                     userFavorite: !recipe.userFavorite
-    //                 };
-    //             }
-    //             return recipe;
-    //         });
-    //         setRecipes(updatedRecipes);
-
-    //         // Example: Update favorite status on server using axios
-    //         await axios.put(`http://localhost:3001/recipe/${recipeId}`, {
-    //             userFavorite: updatedRecipes.find(recipe => recipe._id === recipeId)?.userFavorite
-    //         });
-    //     } catch (error) {
-    //         console.error("Error updating favorite status:", error);
-    //     }
-    // };
-
-    const handleFavoriteChange = (recipeId: string) => {
-        setRecipes(prevRecipes => prevRecipes.map(recipe => {
-            if (recipe._id === recipeId) {
-                return {
-                    ...recipe,
-                    userFavorite: !recipe.userFavorite  // Toggle userFavorite for the clicked recipe
-                };
-            }
-            return recipe;
-        }));
-    };
 
     return (
         <div className="container mx-auto py-20">
@@ -92,7 +96,6 @@ const RecipeList = () => {
                                 className="w-full h-auto object-cover cursor-pointer"
                                 alt={item.recipe_name_eng}
                                 onClick={() => navigate(`/recipe/details/${item._id}`)}
-
                             />
                         </div>
                         <div>
@@ -112,30 +115,16 @@ const RecipeList = () => {
                                         key={star}
                                         icon={star <= (item.userRating || item.reviews[0]?.rating || 0) ? faStar : faStarEmpty}
                                         className="text-yellow-500"
-
                                     />
                                 ))}
                             </div>
-                            {/* {[1].map((star) => (
-                <FontAwesomeIcon
-                  key={star}
-                  icon={rating ? faHeart : faStarEmpty}  // Display faHeart if rated (rating is truthy), otherwise display faStarEmpty
-                  className="text-yellow-500 cursor-pointer "
-                  onClick={() => handleRatingChange(!rating as any)}  // Toggle the rating when clicked
-
-                />
-              ))} */}
-              {item.userFavorite ? (
-                                <FaHeart
-                                    className="text-red-500 cursor-pointer"
-                                    onClick={() => handleFavoriteChange(item._id)}
-                                />
-                            ) : (
-                                <FaRegHeart
-                                    className="text-red-500 cursor-pointer"
-                                    onClick={() => handleFavoriteChange(item._id)}
-                                />
-                            )}
+                            <div onClick={() => handleFavoriteClick(item._id)}>
+                                {favorites.includes(item._id) ? (
+                                    <FaHeart className="text-red-500 cursor-pointer" />
+                                ) : (
+                                    <FaRegHeart className="text-gray-500 cursor-pointer" />
+                                )}
+                            </div>
                         </div>
                     </div>
                 ))}

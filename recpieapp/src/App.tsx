@@ -6,7 +6,6 @@ import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
 import Chart from './pages/Chart';
 import ECommerce from './pages/Dashboard/ECommerce';
-import FormLayout from './pages/Form/FormLayout';
 import Profile from './pages/Profile';
 import Tables from './pages/Tables';
 import DefaultLayout from './layout/DefaultLayout';

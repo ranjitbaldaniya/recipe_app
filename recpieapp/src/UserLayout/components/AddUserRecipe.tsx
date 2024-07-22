@@ -18,7 +18,7 @@ interface IFormInput {
   recipe_steps_eng: string;
   recipe_steps_hindi?: string;
   recipe_steps_guj?: string;
-  category: string;
+  category: any;
   num_of_people_to_served: number;
   cooking_time: string;
   preparation_time: string;
@@ -54,7 +54,7 @@ const AddUserRecipe: React.FC = () => {
     recipe_name_guj: '',
     ingredients_guj: '',
     recipe_steps_guj: '',
-    category: '',
+    category: { _id: '', name: '' },
     num_of_people_to_served: 0,
     cooking_time: '',
     preparation_time: '',
@@ -67,6 +67,7 @@ const AddUserRecipe: React.FC = () => {
 
   useEffect(() => {
     if (recipe) {
+      console.log("recipe", recipe)
       setFormValues({
         recipe_name_eng: recipe.recipe_name_eng || '',
         ingredients_eng: recipe.ingredients_eng || '',
@@ -105,69 +106,15 @@ const AddUserRecipe: React.FC = () => {
     }
   };
 
-  const handleAddSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    try {
-      const formData = new FormData();
-      formData.append('recipe_name_eng', formValues.recipe_name_eng);
-      formData.append('ingredients_eng', formValues.ingredients_eng);
-      formData.append('recipe_steps_eng', formValues.recipe_steps_eng);
-
-      formData.append('recipe_name_hindi', formValues.recipe_name_hindi!);
-      formData.append('ingredients_hindi', formValues.ingredients_hindi!);
-      formData.append('recipe_steps_hindi', formValues.recipe_steps_hindi!);
-
-      formData.append('recipe_name_guj', formValues.recipe_name_guj!);
-      formData.append('ingredients_guj', formValues.ingredients_guj!);
-      formData.append('recipe_steps_guj', formValues.recipe_steps_guj!);
-
-      formData.append('category', formValues.category);
-      formData.append(
-        'num_of_people_to_served',
-        formValues.num_of_people_to_served.toString(),
-      );
-      formData.append('cooking_time', formValues.cooking_time);
-      formData.append('preparation_time', formValues.preparation_time);
-      formData.append('difficulty_level', formValues.difficulty_level);
-      formData.append('status', status.toString());
-      formData.append('create_by', user!.id);
-      formData.append('approved', String(formValues.approved));
-
-      if (formValues.images) {
-        formData.append('images', formValues.images);
-      }
-
-      const response = await axios.post(
-        'http://localhost:3001/recipe',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      navigate('/myrecipe')
-      notify('Recipe added successfully', { type: 'success' });
-
-
-      console.log('Recipe added successfully:', response.data);
-    } catch (error) {
-      notify('Something went wrong', { type: 'error' });
-
-      console.error('Error adding recipe:', error);
-    }
-  };
-
-
   const getEditUserRecipes = async () => {
     if (recipe) {
-      const recipeId = recipe._id; // Assuming recipe._id exists in your state
+      const recipeId = recipe._id;
       try {
         const response = await axios.get(
           `http://localhost:3001/recipe/${recipeId}`
         );
-        const fetchedRecipe = response.data; // Assuming response.data contains the full recipe object
+        const fetchedRecipe = response.data;
+        console.log("fetchrecipe", fetchedRecipe)
         setFormValues({
           recipe_name_eng: fetchedRecipe.recipe_name_eng || '',
           ingredients_eng: fetchedRecipe.ingredients_eng || '',
@@ -178,12 +125,12 @@ const AddUserRecipe: React.FC = () => {
           recipe_name_guj: fetchedRecipe.recipe_name_guj || '',
           ingredients_guj: fetchedRecipe.ingredients_guj || '',
           recipe_steps_guj: fetchedRecipe.recipe_steps_guj || '',
-          category: fetchedRecipe.category || '',
+          category: fetchedRecipe.category || { _id: '', name: '' },
           num_of_people_to_served: fetchedRecipe.num_of_people_to_served || 0,
           cooking_time: fetchedRecipe.cooking_time || '',
           preparation_time: fetchedRecipe.preparation_time || '',
           difficulty_level: fetchedRecipe.difficulty_level || '',
-          images: null, // You might want to handle images separately
+          images: null,
           video_url: fetchedRecipe.video_url || '',
           status: fetchedRecipe.status || true,
           approved: fetchedRecipe.approved || true,
@@ -194,38 +141,9 @@ const AddUserRecipe: React.FC = () => {
     }
   };
   
-
   useEffect(() => {
     getEditUserRecipes();
   }, []);
-  
-  const handleUpdateSubmit = async (event: { preventDefault: () => void; }) => {
-    event.preventDefault();
-    try {
-      const id = recipe._id;
-      // Update the recipe
-      const response = await axios.put(`http://localhost:3001/recipe/${id}`, formValues, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      notify('Recipe updated successfully', { type: 'success' });
-      if(response.data){
-       navigate('./myrecipe')
-       }
-  console.log(formValues)
-        console.log('Recipe updated successfully:', response.data); // Check updated data here
-    } catch (error) {
-      notify('Something went wrong', { type: 'error' });
-      console.error('Error updating recipe:', error);
-    }
-  };
-  
-  
-  
-  
-
  
   const handleInputChange = (
     key: keyof IFormInput,
@@ -240,7 +158,7 @@ const AddUserRecipe: React.FC = () => {
   const renderCategoryOptions = (categories: Category[], depth = 0) => {
     return categories.map((category) => (
       <React.Fragment key={category._id}>
-        <option value={category._id} className="text-blue-900">
+        <option value={category._id} className="">
           {'- '.repeat(depth) + category.name}
         </option>
         {category.subcategories.length > 0 &&
@@ -248,38 +166,70 @@ const AddUserRecipe: React.FC = () => {
       </React.Fragment>
     ));
   };
-
-  // const getEditUserRecipes = async () => {
-  //   if (recipes) {
-  //     const recipeId = recipes[0]._id;
-  //     console.log("first",recipeId)
-  //     try {
-  //       const response = await axios.get(
-  //         `http://localhost:3001/recipe/${recipeId}`
-  //       );
-  //       console.log('response', response);
-  //       setRecipes(response.data.recipes);
-  //     } catch (error) {
-  //       console.error('Error fetching recipes:', error);
-  //     }
-  //   }
-  // };
-
-
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append('recipe_name_eng', formValues.recipe_name_eng);
+    formData.append('ingredients_eng', formValues.ingredients_eng);
+    formData.append('recipe_steps_eng', formValues.recipe_steps_eng);
+    formData.append('recipe_name_hindi', formValues.recipe_name_hindi!);
+    formData.append('ingredients_hindi', formValues.ingredients_hindi!);
+    formData.append('recipe_steps_hindi', formValues.recipe_steps_hindi!);
+    formData.append('recipe_name_guj', formValues.recipe_name_guj!);
+    formData.append('ingredients_guj', formValues.ingredients_guj!);
+    formData.append('recipe_steps_guj', formValues.recipe_steps_guj!);
+    formData.append('category', formValues.category);
+    formData.append('num_of_people_to_served', formValues.num_of_people_to_served.toString());
+    formData.append('cooking_time', formValues.cooking_time);
+    formData.append('preparation_time', formValues.preparation_time);
+    formData.append('difficulty_level', formValues.difficulty_level);
+    formData.append('status', status.toString());
+    formData.append('create_by', user!.id);
+    formData.append('approved', String(formValues.approved));
+  
+    if (formValues.images) {
+      formData.append('images', formValues.images);
+    }
+  
+    const id = recipe?._id;
+    const url = id ? `http://localhost:3001/recipe/${id}` : 'http://localhost:3001/recipe';
+    const method = id ? 'put' : 'post';
+  
+    try {
+      const response = await axios[method](url, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      notify(id ? 'Recipe updated successfully' : 'Recipe added successfully', { type: 'success' });
+      
+      if (response.data) {
+        navigate('/myrecipe');
+      }
+  
+      console.log(id ? 'Recipe updated successfully:' : 'Recipe added successfully:', response.data);
+    } catch (error) {
+      notify('Something went wrong', { type: 'error' });
+      console.error(id ? 'Error updating recipe:' : 'Error adding recipe:', error);
+    }
+  };
+  
   return (
     <div className="bg-white">
-      <h2 className="text-2xl font-semibold text-blue-900 mb-4 text-center">
+      <h2 className="text-2xl font-semibold  mb-4 text-center">
       {recipe ? 'Update Recipe' : 'Add New Recipe'}  
       </h2>
-      <form className="space-y-4 ps-20 pe-20" onSubmit={recipe ? handleUpdateSubmit : handleAddSubmit}>
+      <form className="space-y-4 ps-20 pe-20" onSubmit={handleSubmit}>
         <div>
-          <label className="block text-blue-900 font-bold">Category</label>
+          <label className="block  font-bold">Category</label>
           <select
-            value={formValues.category}
+            value={formValues.category._id}
             onChange={(e) => handleInputChange('category', e.target.value)}
             className="w-full border rounded p-2"
           >
-            <option className="text-blue-900" value="">
+            <option className="" value="">
               Select Category
             </option>
             {renderCategoryOptions(categories)}
@@ -292,8 +242,8 @@ const AddUserRecipe: React.FC = () => {
               type="button"
               className={`py-2 px-4 ${
                 activeTab === 'eng'
-                  ? 'bg-blue-500 text-white '
-                  : 'bg-gray-300 text-blue-900 font-bold'
+                  ? 'bg-green-500 text-white '
+                  : 'bg-gray-300  font-bold'
               } rounded`}
               onClick={() => setActiveTab('eng')}
             >
@@ -303,8 +253,8 @@ const AddUserRecipe: React.FC = () => {
               type="button"
               className={`py-2 px-4 ${
                 activeTab === 'hindi'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-300 text-blue-900 font-bold'
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-300  font-bold'
               } rounded`}
               onClick={() => setActiveTab('hindi')}
             >
@@ -314,8 +264,8 @@ const AddUserRecipe: React.FC = () => {
               type="button"
               className={`py-2 px-4 ${
                 activeTab === 'guj'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-300 text-blue-900 font-bold'
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-300  font-bold'
               } rounded`}
               onClick={() => setActiveTab('guj')}
             >
@@ -323,14 +273,14 @@ const AddUserRecipe: React.FC = () => {
             </button>
           </div>
           {activeTab === 'eng' && (
-            <div className="border p-5 rounded">
+            <div className="  ">
               <div>
-                <label className="block text-blue-900 font-bold">
+                <label className="block font-bold">
                   Recipe Name
                 </label>
                 <input
                   type="text"
-                  className="w-full border rounded p-2"
+                  className="w-full border border-[#ccc] rounded p-2"
                   placeholder="Add recipe name in english"
                   value={formValues.recipe_name_eng}
                   onChange={(e) =>
@@ -339,7 +289,7 @@ const AddUserRecipe: React.FC = () => {
                 />
               </div>
               <div className="mt-2">
-                <label className="block text-blue-900 font-bold">
+                <label className="block font-bold ">
                   Ingredients
                 </label>
                 <ReactQuill
@@ -347,10 +297,11 @@ const AddUserRecipe: React.FC = () => {
                   onChange={(value) =>
                     handleInputChange('ingredients_eng', value)
                   }
+                  className=' rounded data'
                 />
               </div>
               <div className="mt-2">
-                <label className="block text-blue-900 font-bold">
+                <label className="block font-bold">
                   Recipe Steps
                 </label>
                 <ReactQuill
@@ -358,6 +309,7 @@ const AddUserRecipe: React.FC = () => {
                   onChange={(value) =>
                     handleInputChange('recipe_steps_eng', value)
                   }
+                  className='rounded data'
                 />
               </div>
             </div>
@@ -365,7 +317,7 @@ const AddUserRecipe: React.FC = () => {
           {activeTab === 'hindi' && (
             <div className="border p-5 rounded">
               <div>
-                <label className="block text-blue-900 font-bold">
+                <label className="block  font-bold">
                   Recipe Name
                 </label>
                 <input
@@ -379,7 +331,7 @@ const AddUserRecipe: React.FC = () => {
                 />
               </div>
               <div className="mt-2">
-                <label className="block text-blue-900 font-bold">
+                <label className="block  font-bold">
                   Ingredients
                 </label>
                 <ReactQuill
@@ -390,7 +342,7 @@ const AddUserRecipe: React.FC = () => {
                 />
               </div>
               <div className="mt-2">
-                <label className="block text-blue-900 font-bold">
+                <label className="block  font-bold">
                   Recipe Steps
                 </label>
                 <ReactQuill
@@ -405,7 +357,7 @@ const AddUserRecipe: React.FC = () => {
           {activeTab === 'guj' && (
             <div className="border p-5 rounded">
               <div>
-                <label className="block text-blue-900 font-bold">
+                <label className="block  font-bold">
                   Recipe Name
                 </label>
                 <input
@@ -419,7 +371,7 @@ const AddUserRecipe: React.FC = () => {
                 />
               </div>
               <div className="mt-2">
-                <label className="block text-blue-900 font-bold">
+                <label className="block  font-bold">
                   Ingredients
                 </label>
                 <ReactQuill
@@ -430,7 +382,7 @@ const AddUserRecipe: React.FC = () => {
                 />
               </div>
               <div className="mt-2">
-                <label className="block text-blue-900 font-bold">
+                <label className="block  font-bold">
                   Recipe Steps
                 </label>
                 <ReactQuill
@@ -446,12 +398,12 @@ const AddUserRecipe: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-blue-900 font-bold">
+            <label className="block  font-bold">
               Number of People to Serve
             </label>
             <input
               type="number"
-              className="w-full border rounded p-2"
+              className="w-full border border-[#ccc]  rounded p-2"
               value={formValues.num_of_people_to_served}
               onChange={(e) =>
                 handleInputChange(
@@ -462,12 +414,12 @@ const AddUserRecipe: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-blue-900 font-bold">
+            <label className="block  font-bold">
               Cooking Time
             </label>
             <input
               type="text"
-              className="w-full border rounded p-2"
+              className="w-full border border-[#ccc]  rounded p-2"
               placeholder="Ex - 20 min"
               value={formValues.cooking_time}
               onChange={(e) =>
@@ -476,12 +428,12 @@ const AddUserRecipe: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-blue-900 font-bold">
+            <label className="block  font-bold">
               Preparation Time
             </label>
             <input
               type="text"
-              className="w-full border rounded p-2"
+              className="w-full border border-[#ccc]  rounded p-2"
               placeholder="Ex - 1 hr 20 min"
               value={formValues.preparation_time}
               onChange={(e) =>
@@ -490,12 +442,12 @@ const AddUserRecipe: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-blue-900 font-bold">
+            <label className="block  font-bold">
               Difficulty Level
             </label>
             <input
               type="text"
-              className="w-full border rounded p-2"
+              className="w-full border border-[#ccc]  rounded p-2"
               value={formValues.difficulty_level}
               placeholder="Ex - For Begginers"
               onChange={(e) =>
@@ -504,11 +456,11 @@ const AddUserRecipe: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-blue-900 font-bold">Image</label>
+            <label className="block  font-bold">Image</label>
             <input
               type="file"
               accept="image/*"
-              className="w-full border rounded p-2"
+              className="w-full border border-[#ccc]  rounded p-2"
               onChange={(e) =>
                 handleInputChange(
                   'images',
@@ -518,10 +470,10 @@ const AddUserRecipe: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-blue-900 font-bold">Video URL</label>
+            <label className="block  font-bold">Video URL</label>
             <input
               type="text"
-              className="w-full border rounded p-2"
+              className="w-full border border-[#ccc]  rounded p-2"
               placeholder="Add your video url"
               value={formValues.video_url}
               onChange={(e) => handleInputChange('video_url', e.target.value)}
@@ -530,14 +482,14 @@ const AddUserRecipe: React.FC = () => {
         </div>
 
         <div className=" mt-4">
-          <label className="block text-blue-900 font-bold">Status</label>
+          <label className="block  font-bold">Status</label>
           <SwitcherTwo status={status} setStatus={setStatus} />
         </div>
 
         <div className="flex justify-center mt-4">
           <button
             type="submit"
-            className="bg-blue-900 text-white py-2 px-4 rounded hover:bg-blue-600 font-bold"
+            className="bg-green-900 text-white py-2 px-4 rounded hover:bg-green-600 font-bold"
           >
                   {recipe ? 'Update Recipe' : 'Add Recipe'}  
           </button>

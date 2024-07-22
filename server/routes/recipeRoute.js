@@ -12,9 +12,9 @@ import uploadSingle from "../middlewares/uploadMiddleware.js";
 const recipeRoute = express.Router();
 
 recipeRoute.post("/",uploadSingle,createRecipe);
-recipeRoute.get("/", getRecipes);
+recipeRoute.get("/", getRecipes); 
 recipeRoute.get("/:id", getRecipeById);
-recipeRoute.put("/:id", updateRecipe);
+recipeRoute.put("/:id",uploadSingle, updateRecipe);
 recipeRoute.delete("/:id", deleteRecipe);
 
 //get recipe details with rate and review 
