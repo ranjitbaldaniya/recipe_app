@@ -91,14 +91,13 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
             aria-expanded={dropdown ? "true" : "false"}
             onClick={()=>handleClick(items.id)}
           >
-            <Link to={items.url} onClick={()=>handleClick(items.id)}>{items.title}</Link>
+            <Link to='' onClick={()=>handleClick(items.id)}>{items.title}</Link>
             <span className={`arrow ${depthLevel === 0 ? "down" : "right"}`}  />
           </button>
           <Dropdown depthLevel={depthLevel} submenus={items.submenu} dropdown={dropdown}   />
         </>
       ) : items.submenu && items.submenu.length > 0 ? (
         <>
-        {console.log('items',items)}
           <button
             type="submit"
             aria-haspopup="menu"
