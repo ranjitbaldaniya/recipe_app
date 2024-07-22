@@ -76,7 +76,7 @@ const MyRecipe = () => {
             if (recipe._id === recipeId) {
                 return {
                     ...recipe,
-                    userFavorite: !recipe.userFavorite  // Toggle userFavorite for the clicked recipe
+                    userFavorite: !recipe.userFavorite
                 };
             }
             return recipe;

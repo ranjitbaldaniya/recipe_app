@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useCategory } from '../CategoryContext';
 
 interface MenuItem {
   title: string;
@@ -36,6 +36,7 @@ const Dropdown: React.FC<DropdownProps> = ({ submenus, dropdown, depthLevel }) =
 const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
   const [dropdown, setDropdown] = useState(false);
   const ref = useRef<HTMLLIElement>(null);
+  const { setCategoryId } = useCategory();
 
   useEffect(() => {
     const handler = (event: MouseEvent | TouchEvent) => {
@@ -67,12 +68,10 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
     setDropdown((prev) => !prev);
   };
 
-  const handleClick = (id:any) => {
-      axios.get(`http://localhost:3001/recipe?category=${id}`)        
-        .catch((error) => {
-          console.error('Error fetching data:', error);
-        });
-    
+  const handleClick = (id: string | undefined) => {
+    if (id) {
+      setCategoryId(id);
+    }
   };
 
   return (
