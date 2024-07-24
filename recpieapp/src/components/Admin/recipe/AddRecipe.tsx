@@ -136,7 +136,7 @@ const AddRecipe: React.FC = () => {
   const renderCategoryOptions = (categories: Category[], depth = 0) => {
     return categories.map((category) => (
       <React.Fragment key={category._id}>
-        <option value={category._id} className='text-blue-900'>
+        <option value={category._id} className=''>
           {'- '.repeat(depth) + category.name}
         </option>
         {category.subcategories.length > 0 &&
@@ -147,18 +147,18 @@ const AddRecipe: React.FC = () => {
 
   return (
     <div className='bg-white'>
-      <h2 className="text-2xl font-semibold text-blue-900 mb-4 text-center">
+      <h2 className="text-2xl font-semibold  mb-4 text-center">
         Add New Recipe
       </h2>
       <form className="space-y-4 ps-20 pe-20" onSubmit={handleSubmit}>
         <div>
-          <label className="block text-blue-900 font-bold">Category</label>
+          <label className="block  font-bold">Category</label>
           <select
             value={formValues.category}
             onChange={(e) => handleInputChange('category', e.target.value)}
             className="w-full border rounded p-2"
           >
-            <option className='text-blue-900' value="">Select Category</option>
+            <option className='' value="">Select Category</option>
             {renderCategoryOptions(categories)}
           </select>
         </div>
@@ -170,7 +170,7 @@ const AddRecipe: React.FC = () => {
               className={`py-2 px-4 ${
                 activeTab === 'eng'
                   ? 'bg-blue-500 text-white '
-                  : 'bg-gray-300 text-blue-900 font-bold'
+                  : 'bg-gray-300  font-bold'
               } rounded`}
               onClick={() => setActiveTab('eng')}
             >
@@ -181,7 +181,7 @@ const AddRecipe: React.FC = () => {
               className={`py-2 px-4 ${
                 activeTab === 'hindi'
                   ? 'bg-blue-500 text-white'
-                  : 'bg-gray-300 text-blue-900 font-bold'
+                  : 'bg-gray-300  font-bold'
               } rounded`}
               onClick={() => setActiveTab('hindi')}
             >
@@ -192,7 +192,7 @@ const AddRecipe: React.FC = () => {
               className={`py-2 px-4 ${
                 activeTab === 'guj'
                   ? 'bg-blue-500 text-white'
-                  : 'bg-gray-300 text-blue-900 font-bold'
+                  : 'bg-gray-300  font-bold'
               } rounded`}
               onClick={() => setActiveTab('guj')}
             >
@@ -202,7 +202,7 @@ const AddRecipe: React.FC = () => {
           {activeTab === 'eng' && (
             <div className='border p-5 rounded'>
               <div>
-                <label className="block text-blue-900 font-bold">Recipe Name</label>
+                <label className="block  font-bold">Recipe Name</label>
                 <input
                   type="text"
                   className="w-full border rounded p-2"
@@ -214,7 +214,7 @@ const AddRecipe: React.FC = () => {
                 />
               </div>
               <div className='mt-2'>
-                <label className="block text-blue-900 font-bold">Ingredients</label>
+                <label className="block  font-bold">Ingredients</label>
                 <ReactQuill
                   value={formValues.ingredients_eng}
                   onChange={(value) =>
@@ -223,7 +223,7 @@ const AddRecipe: React.FC = () => {
                 />
               </div>
               <div className='mt-2'>
-                <label className="block text-blue-900 font-bold">Recipe Steps</label>
+                <label className="block  font-bold">Recipe Steps</label>
                 <ReactQuill
                   value={formValues.recipe_steps_eng}
                   onChange={(value) =>
@@ -236,7 +236,7 @@ const AddRecipe: React.FC = () => {
           {activeTab === 'hindi' && (
             <div className='border p-5 rounded'>
               <div>
-                <label className="block text-blue-900 font-bold">Recipe Name</label>
+                <label className="block  font-bold">Recipe Name</label>
                 <input
                   type="text"
                   className="w-full border rounded p-2"
@@ -249,7 +249,7 @@ const AddRecipe: React.FC = () => {
                 />
               </div>
               <div className='mt-2'>
-                <label className="block text-blue-900 font-bold">Ingredients</label>
+                <label className="block  font-bold">Ingredients</label>
                 <ReactQuill
                   value={formValues.ingredients_hindi}
                   onChange={(value) =>
@@ -258,7 +258,7 @@ const AddRecipe: React.FC = () => {
                 />
               </div>
               <div className='mt-2'>
-                <label className="block text-blue-900 font-bold">Recipe Steps</label>
+                <label className="block  font-bold">Recipe Steps</label>
                 <ReactQuill
                   value={formValues.recipe_steps_hindi}
                   onChange={(value) =>
@@ -271,7 +271,7 @@ const AddRecipe: React.FC = () => {
           {activeTab === 'guj' && (
             <div className='border p-5 rounded'>
               <div>
-                <label className="block text-blue-900 font-bold">Recipe Name</label>
+                <label className="block  font-bold">Recipe Name</label>
                 <input
                   type="text"
                   className="w-full border rounded p-2"
@@ -284,7 +284,7 @@ const AddRecipe: React.FC = () => {
                 />
               </div>
               <div className='mt-2'>
-                <label className="block text-blue-900 font-bold">Ingredients</label>
+                <label className="block  font-bold">Ingredients</label>
                 <ReactQuill
                   value={formValues.ingredients_guj}
                   onChange={(value) =>
@@ -293,7 +293,7 @@ const AddRecipe: React.FC = () => {
                 />
               </div>
               <div className='mt-2'>
-                <label className="block text-blue-900 font-bold">Recipe Steps</label>
+                <label className="block  font-bold">Recipe Steps</label>
                 <ReactQuill
                   value={formValues.recipe_steps_guj}
                   onChange={(value) =>
@@ -307,7 +307,7 @@ const AddRecipe: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-blue-900 font-bold">
+            <label className="block  font-bold">
               Number of People to Serve
             </label>
             <input
@@ -323,7 +323,7 @@ const AddRecipe: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-blue-900 font-bold">Cooking Time</label>
+            <label className="block  font-bold">Cooking Time</label>
             <input
               type="text"
               className="w-full border rounded p-2"
@@ -335,7 +335,7 @@ const AddRecipe: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-blue-900 font-bold">Preparation Time</label>
+            <label className="block  font-bold">Preparation Time</label>
             <input
               type="text"
               className="w-full border rounded p-2"
@@ -347,7 +347,7 @@ const AddRecipe: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-blue-900 font-bold">Difficulty Level</label>
+            <label className="block  font-bold">Difficulty Level</label>
             <input
               type="text"
               className="w-full border rounded p-2"
@@ -359,7 +359,7 @@ const AddRecipe: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-blue-900 font-bold">Image</label>
+            <label className="block  font-bold">Image</label>
             <input
               type="file"
               accept="image/*"
@@ -373,7 +373,7 @@ const AddRecipe: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-blue-900 font-bold">Video URL</label>
+            <label className="block  font-bold">Video URL</label>
             <input
               type="text"
               className="w-full border rounded p-2"
@@ -385,7 +385,7 @@ const AddRecipe: React.FC = () => {
         </div>
 
         <div className=" mt-4">
-          <label className="block text-blue-900 font-bold">Status</label>
+          <label className="block  font-bold">Status</label>
           <SwitcherTwo status={status} setStatus={setStatus} />
         </div>
 

@@ -1,9 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar } from '@fortawesome/free-solid-svg-icons';
-import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { useCategory } from '../components/CategoryContext';
 
@@ -28,7 +25,7 @@ const RecipeList = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user') as any);
-  const id = user.id;
+  const id = user?.id || '';
   const { categoryId } = useCategory();
 
   const getRecipes = async () => {
@@ -120,16 +117,7 @@ const RecipeList = () => {
                   day: 'numeric',
                 })}
               </p>
-              <p className="text-lg font-semibold text-black">{item.recipe_name_eng}</p>
-              <div>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <FontAwesomeIcon
-                    key={star}
-                    icon={star <= (item.userRating || item.reviews[0]?.rating || 0) ? faStar : faStarEmpty}
-                    className="text-yellow-500"
-                  />
-                ))}
-              </div>
+              <p className="text-lg font-semibold text-black cursor-pointer" onClick={() => navigate(`/recipe/details/${item._id}`)}>{item.recipe_name_eng}</p>
               <div onClick={() => handleFavoriteClick(item._id)}>
                 {favorites.includes(item._id) ? (
                   <FaHeart className="text-red-500 cursor-pointer" />
