@@ -1,5 +1,6 @@
 // import Header from "../Header"
 import About from "../About"
+import Footer from "../Footer"
 // import ContactUs from "../ContactUs"
 import Navbar from "../Navbar"
 
@@ -9,6 +10,7 @@ const Aboutus = () => {
             {/* <Header /> */}
             <Navbar />
             <About />
+            <Footer />
         </div>
     )
 }

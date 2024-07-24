@@ -67,7 +67,6 @@ const AddUserRecipe: React.FC = () => {
 
   useEffect(() => {
     if (recipe) {
-      console.log("recipe", recipe)
       setFormValues({
         recipe_name_eng: recipe.recipe_name_eng || '',
         ingredients_eng: recipe.ingredients_eng || '',
@@ -114,7 +113,6 @@ const AddUserRecipe: React.FC = () => {
           `http://localhost:3001/recipe/${recipeId}`
         );
         const fetchedRecipe = response.data;
-        console.log("fetchrecipe", fetchedRecipe)
         setFormValues({
           recipe_name_eng: fetchedRecipe.recipe_name_eng || '',
           ingredients_eng: fetchedRecipe.ingredients_eng || '',
@@ -221,7 +219,7 @@ const AddUserRecipe: React.FC = () => {
       <h2 className="text-2xl font-semibold  mb-4 text-center">
       {recipe ? 'Update Recipe' : 'Add New Recipe'}  
       </h2>
-      <form className="space-y-4 ps-20 pe-20" onSubmit={handleSubmit}>
+      <form className="space-y-4 lg:ps-20 lg:pe-20" onSubmit={handleSubmit}>
         <div>
           <label className="block  font-bold">Category</label>
           <select
@@ -276,7 +274,7 @@ const AddUserRecipe: React.FC = () => {
             <div className="  ">
               <div>
                 <label className="block font-bold">
-                  Recipe Name
+                  Recipe Name in English
                 </label>
                 <input
                   type="text"
@@ -315,14 +313,14 @@ const AddUserRecipe: React.FC = () => {
             </div>
           )}
           {activeTab === 'hindi' && (
-            <div className="border p-5 rounded">
+            <div className="">
               <div>
                 <label className="block  font-bold">
-                  Recipe Name
+                  Recipe Name in Hindi
                 </label>
                 <input
                   type="text"
-                  className="w-full border rounded p-2"
+                  className="w-full border border-[#ccc] rounded p-2"
                   placeholder="Add recipe name in hindi"
                   value={formValues.recipe_name_hindi}
                   onChange={(e) =>
@@ -355,14 +353,14 @@ const AddUserRecipe: React.FC = () => {
             </div>
           )}
           {activeTab === 'guj' && (
-            <div className="border p-5 rounded">
+            <div className="">
               <div>
                 <label className="block  font-bold">
-                  Recipe Name
+                  Recipe Name in Gujarati
                 </label>
                 <input
                   type="text"
-                  className="w-full border rounded p-2"
+                  className="w-full border border-[#ccc] rounded p-2"
                   placeholder="Add recipe name in gujrati"
                   value={formValues.recipe_name_guj}
                   onChange={(e) =>

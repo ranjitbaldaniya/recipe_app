@@ -101,9 +101,9 @@ const RecipeList = () => {
 
   return (
     <div className="container mx-auto py-20">
-      <div className="grid grid-cols-3 gap-10">
+      <div className="flex gap-10 flex-wrap">
         {recipes.map((item) => (
-          <div key={item._id} className="flex gap-4">
+          <div key={item._id} className="">
             <div className="w-30 h-30 overflow-hidden">
               <img
                 src={`http://localhost:3001/${item.images}`}
@@ -113,7 +113,7 @@ const RecipeList = () => {
               />
             </div>
             <div>
-              <p className="text-xs text-[#40ba37] font-normal">
+              <p className="text-xs text-[#40ba37] font-normal mt-2">
                 {new Date(item.create_at).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
@@ -132,9 +132,9 @@ const RecipeList = () => {
               </div>
               <div onClick={() => handleFavoriteClick(item._id)}>
                 {favorites.includes(item._id) ? (
-                  <FaHeart className="text-red-500 cursor-pointer" />
+                  <FaHeart className="text-red-500 cursor-pointer mt-1" />
                 ) : (
-                  <FaRegHeart className="text-gray-500 cursor-pointer" />
+                  <FaRegHeart className="text-gray-500 cursor-pointer mt-1" />
                 )}
               </div>
             </div>

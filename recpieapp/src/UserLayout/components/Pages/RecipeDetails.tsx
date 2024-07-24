@@ -59,7 +59,7 @@ const RecipeDetails: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto p-20 bg-white">
+      <div className="container mx-auto lg:p-20 bg-white">
         <img
           src={`http://localhost:3001/${data?.recipe.images}`}
           alt="Recipe Banner"
@@ -95,7 +95,7 @@ const RecipeDetails: React.FC = () => {
           </div>
 
           <div className="w-full md:w-1/3 flex flex-col items-end">
-            <div className="recipe-ratings text-right my-5">
+            <div className="recipe-ratings my-5">
               <div className="ratings flex space-x-1">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <FontAwesomeIcon
@@ -206,8 +206,8 @@ const RecipeDetails: React.FC = () => {
               >
                 <div className="p-2 bg-gray-100">
                   <h3 className="text-lg font-semibold text-[#474747]">
-                    {/* {review.user_id.user_name} */}
-                    {review.user_id ? review.user_id.user_name : ''}
+                  {/* {review.user_id?.user_name || 'Unknown User'} */}
+                  {review.user_id ? review.user_id.user_name : ''}
                   </h3>
                   <p>
                     {Array.from({ length: 5 }, (_, index) => (

@@ -386,7 +386,7 @@ span.flatpickr-weekday,
   }
 
   .desktop-nav {
-    display: none;
+    /* display: none; */
     text-align: right;
   }
 
