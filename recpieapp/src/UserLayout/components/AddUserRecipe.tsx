@@ -123,7 +123,7 @@ const AddUserRecipe: React.FC = () => {
           recipe_name_guj: fetchedRecipe.recipe_name_guj || '',
           ingredients_guj: fetchedRecipe.ingredients_guj || '',
           recipe_steps_guj: fetchedRecipe.recipe_steps_guj || '',
-          category: fetchedRecipe.category || { _id: '', name: '' },
+          category: fetchedRecipe.category._id || '',
           num_of_people_to_served: fetchedRecipe.num_of_people_to_served || 0,
           cooking_time: fetchedRecipe.cooking_time || '',
           preparation_time: fetchedRecipe.preparation_time || '',
@@ -223,7 +223,7 @@ const AddUserRecipe: React.FC = () => {
         <div>
           <label className="block  font-bold">Category</label>
           <select
-            value={formValues.category._id}
+            value={formValues.category}
             onChange={(e) => handleInputChange('category', e.target.value)}
             className="w-full border rounded p-2"
           >

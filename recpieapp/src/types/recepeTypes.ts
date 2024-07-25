@@ -16,6 +16,7 @@ export interface Review {
     recipe_id: string;
     rating: number;
     review: string;
+    approved:string;
 }
 
 export interface Recipe {
