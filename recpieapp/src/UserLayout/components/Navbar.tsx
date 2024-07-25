@@ -1,21 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import logo from '../../../public/logo.png';
 import axios from 'axios';
-import { FaUserCircle } from 'react-icons/fa';
+import { FaBars, FaUserCircle } from 'react-icons/fa';
 import { notify } from '../../common/Toast';
 import { useAuth } from '../../hooks/useAuth';
 import MenuItems from './Pages/MenuItems';
 
-
 const Navbar: React.FC = () => {
   const { login, logout } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [isMegaMenuOpen, setMegaMenuOpen] = useState(false);
   const [isLoginPopupOpen, setLoginPopupOpen] = useState(false);
   const [isSignUpPopupOpen, setSignUpPopupOpen] = useState(false);
   const [isProfileOpen, setProfileOpen] = useState(false);
-  const [showLogin, setShowLogin] = useState(true)
+  const [showLogin, setShowLogin] = useState(true);
   const [userName, setUserName] = useState(localStorage.getItem('user_name'));
   const [category, setCategory] = useState<any>();
   const [formSignUpData, setFormSignUpData] = useState({
@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
     email: '',
     password: '',
     role: 'user',
-    gender: true
+    gender: true,
   });
 
   const [formData, setFormData] = useState({
@@ -31,14 +31,17 @@ const Navbar: React.FC = () => {
     password: '',
     role: 'user',
   });
-  const user_name = localStorage.getItem('user_name')
+  const user_name = localStorage.getItem('user_name');
   const modalRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
   const CategoryItem = ({ category, level = 0 }: any) => {
     return (
       <div key={category._id} className="p-4 pb-0 md:pb-4">
         <h3
-          className={`text-md mb-4 ${level === 0 ? 'font-bold text-black' : 'font-normal text-gray-700'
-            }`}
+          className={`text-md mb-4 ${
+            level === 0 ? 'font-bold text-black' : 'font-normal text-gray-700'
+          }`}
         >
           {category.name}
         </h3>
@@ -57,12 +60,14 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
         setLoginPopupOpen(false);
         setSignUpPopupOpen(false);
-        setMegaMenuOpen(false)
-        setProfileOpen(false)
-
+        setMegaMenuOpen(false);
+        setProfileOpen(false);
       }
     };
 
@@ -85,18 +90,20 @@ const Navbar: React.FC = () => {
     e.preventDefault();
     setLoginPopupOpen(false);
 
-
     try {
-      const response: any = await axios.post('http://localhost:3001/auth/login', formData);
+      const response: any = await axios.post(
+        'http://localhost:3001/auth/login',
+        formData,
+      );
 
       const { user, token } = response.data;
       if (token) {
         login(user, token);
 
         notify(response.data.message, { type: 'success' });
-        localStorage.setItem('user_name', response.data.user.user_name)
-        setUserName(response.data.user.user_name)
-        setShowLogin(false)
+        localStorage.setItem('user_name', response.data.user.user_name);
+        setUserName(response.data.user.user_name);
+        setShowLogin(false);
       }
     } catch (error) {
       notify('Error logging in. Please try again.', { type: 'error' });
@@ -104,34 +111,34 @@ const Navbar: React.FC = () => {
   };
 
   const getCategory = async () => {
-    const response = await axios.get('http://localhost:3001/category')
-    setCategory(response.data)
-  }
+    const response = await axios.get('http://localhost:3001/category');
+    setCategory(response.data);
+  };
   useEffect(() => {
-    getCategory()
-  }, [])
+    getCategory();
+  }, []);
   const handleSignOut = () => {
-    logout()
-    setShowLogin(true)
-    localStorage.removeItem('user_name')
-    setProfileOpen(false)
-  }
+    logout();
+    setShowLogin(true);
+    localStorage.removeItem('user_name');
+    setProfileOpen(false);
+  };
 
   const handleSignUpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSignUpPopupOpen(false)
+    setSignUpPopupOpen(false);
 
     try {
       const response: any = await axios.post(
         'http://localhost:3001/auth/register',
         formSignUpData,
-      )
+      );
       const userName = response.data.user.user_name;
-      localStorage.setItem('user_name', userName)
+      localStorage.setItem('user_name', userName);
       if (response.data && response.data.token) {
         notify(response.data.message, { type: 'success' });
-        setUserName(response.data.user.user_name)
-        setShowLogin(false)
+        setUserName(response.data.user.user_name);
+        setShowLogin(false);
       }
     } catch (error) {
       notify('Error SignUp in:', { type: 'error' });
@@ -140,136 +147,182 @@ const Navbar: React.FC = () => {
 
   const handleSignUpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormSignUpData(prevState => ({
+    setFormSignUpData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const transformCategoryData = (categories: any) => {
-    return categories?.map((category: { _id:any; name: string; subcategories: any; }) => ({
-      id:category._id,
-      title: category.name,
-      url: `/${category.name.toLowerCase().replace(/\s+/g, '-')}`,
-      submenu: category.subcategories ? transformCategoryData(category.subcategories) : []
-    }));
+    return categories?.map(
+      (category: { _id: any; name: string; subcategories: any }) => ({
+        id: category._id,
+        title: category.name,
+        url: `/${category.name.toLowerCase().replace(/\s+/g, '-')}`,
+        submenu: category.subcategories
+          ? transformCategoryData(category.subcategories)
+          : [],
+      }),
+    );
+  };
+
+  const handleMegaMenuClick = () => {
+    setMegaMenuOpen(!isMegaMenuOpen);
+    navigate('/');
   };
   const transformedCategoryItems = transformCategoryData(category);
+ const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
+const handleClick = async () => {
+  try {
+    const response = await axios.get('http://localhost:3001/recipe');
+    console.log('Recipes:', response.data.recipes);
+  } catch (error) {
+    console.error('Error fetching recipes:', error);
+  }
+};
   return (
     <>
-      <nav>
-        <div className="container mx-auto px-4 py-2 flex justify-between items-center">
-          <div>
-            <img src={logo} />
-          </div>
-          <ul className="flex space-x-6 text-gray-800">
-            <li>
-              <NavLink
-                to="/"
-                className="hover:text-green-500 text-sm font-semibold text-[#474747]"
-              >
-                HOME
-              </NavLink>
-            </li>
-
+        <nav>
+      <div className="container mx-auto px-4 py-2 flex justify-between items-center">
+        <div>
+          <img src={logo} alt="Logo" />
+        </div>
+        <div className="md:hidden">
+          <button
+            onClick={toggleMenu}
+            className="text-gray-900 hover:text-green-500 focus:outline-none"
+          >
+            <FaBars size={25} />
+          </button>
+        </div>
+        <ul className={` justify-center items-center flex-col md:flex-row md:flex ${isMenuOpen ? 'flex' : 'hidden'} md:space-x-6  md:static absolute top-30 left-0 right-0 bg-white md:bg-transparent shadow-lg md:shadow-none`}>
+          <li>
+            <NavLink
+              to="/"
+              className="hover:text-green-500 text-sm font-semibold text-[#474747]"
+              onClick={handleClick}
+              style={({ isActive }) => ({
+                color: isActive ? 'green' : '',
+              })}
+            >
+              HOME
+            </NavLink>
+          </li>
+          <li className="relative group">
+            <button
+              onClick={handleMegaMenuClick}
+              className={`${
+                isMegaMenuOpen ? 'text-green-500' : ''
+              } focus:outline-none text-sm font-semibold text-[#474747]`}
+            >
+              RECIPE
+            </button>
+          </li>
+          <li>
+            <NavLink
+              to="/aboutus"
+              className="hover:text-green-500 text-sm font-semibold text-[#474747]"
+              style={({ isActive }) => ({
+                color: isActive ? 'green' : '',
+              })}
+            >
+              ABOUT US
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/contact"
+              className="hover:text-green-500 text-sm font-semibold text-[#474747]"
+              style={({ isActive }) => ({
+                color: isActive ? 'green' : '',
+              })}
+            >
+              CONTACT US
+            </NavLink>
+          </li>
+          {showLogin && !user_name && (
             <li className="relative group">
               <button
-                onClick={() => setMegaMenuOpen(!isMegaMenuOpen)}
+                onClick={() => setLoginPopupOpen(!isLoginPopupOpen)}
                 className="hover:text-green-500 focus:outline-none text-sm font-semibold text-[#474747]"
               >
-                RECIPE
+                LOGIN
               </button>
-
             </li>
-            <li>
-              <NavLink
-                to="/aboutus"
-                className="hover:text-green-500 text-sm font-semibold text-[#474747]"
+          )}
+          {user_name && (
+            <li className="relative group">
+              <button
+                onClick={() => setProfileOpen(!isProfileOpen)}
+                className="hover:text-green-500 focus:outline-none text-sm font-semibold text-[#474747]"
               >
-                ABOUT US
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/contact"
-                className="hover:text-green-500 text-sm font-semibold text-[#474747]"
-              >
-                CONTACT US
-              </NavLink>
-            </li>
-            {showLogin && !user_name &&
-              <li className="relative group">
-                <button
-                  onClick={() => setLoginPopupOpen(!isLoginPopupOpen)}
-                  className="hover:text-green-500 focus:outline-none text-sm font-semibold text-[#474747]"
-                >
-                  LOGIN
-                </button>
-              </li>}
-
-            {user_name &&
-              <li className="relative group">
-                <button
-                  onClick={() => setProfileOpen(!isProfileOpen)}
-                  className="hover:text-green-500 focus:outline-none text-sm font-semibold text-[#474747]"
-                >
-                  <FaUserCircle size={25} />
-                </button>
-                {isProfileOpen && (
-                  <ul className="absolute right-0 w-48 bg-white text-gray-900 shadow-lg z-1">
-                    <div ref={modalRef} className='relative'>
-                    <div className="px-4  py-3">
-                      <span className="block hover:bg-gray-200 text-green-500 font-bold">{userName} </span>
+                <FaUserCircle size={25} />
+              </button>
+              {isProfileOpen && (
+                <ul className="absolute right-0 w-48 bg-white text-gray-900 shadow-lg z-1">
+                  <div ref={modalRef} className="relative">
+                    <div className="px-4 py-3">
+                      <span className="block hover:bg-gray-200 text-green-500 font-bold">
+                        {userName}{' '}
+                      </span>
                     </div>
                     <li>
-                      <NavLink to='/myrecipe'
-                      onClick={()=>setProfileOpen(false)}
-                        className="block hover:bg-gray-200 px-4 py-2 "
+                      <NavLink
+                        to="/myrecipe"
+                        onClick={() => setProfileOpen(false)}
+                        className="block hover:bg-gray-200 px-4 py-2"
                       >
                         My Recipe
                       </NavLink>
                     </li>
                     <li>
-                      <NavLink to='/favorites'
-                      onClick={()=>setProfileOpen(false)}
-                        className="block hover:bg-gray-200 px-4 py-2 "
+                      <NavLink
+                        to="/favorites"
+                        onClick={() => setProfileOpen(false)}
+                        className="block hover:bg-gray-200 px-4 py-2"
                       >
-                       Favorites
+                        Favorites
                       </NavLink>
                     </li>
-
                     <li>
                       <button
                         onClick={handleSignOut}
-                        className="block hover:bg-gray-200 px-4 py-2 "
+                        className="block hover:bg-gray-200 px-4 py-2"
                       >
                         Logout
                       </button>
                     </li>
-                    </div>
-                  </ul>
-                )}
-              </li>}
-          </ul>
-        </div>
-        {isMegaMenuOpen && (
+                  </div>
+                </ul>
+              )}
+            </li>
+          )}
+        </ul>
+      </div>
+      {isMegaMenuOpen && (
           <div className="absolute z-10  w-[97%]  shadow-2xl text-sm bg-white">
             <div ref={modalRef}>
-            <nav className="desktop-nav flex justify-center items-center">
-              <ul className="menus">
-                {transformedCategoryItems?.map((menu: any, index: any) => {
-                  return <MenuItems items={menu} key={index} depthLevel={0} />;
-                })}
-              </ul>
-            </nav>
-           </div>
-
+              <nav className="desktop-nav flex justify-center items-center">
+                <ul className="menus">
+                  {transformedCategoryItems?.map((menu: any, index: any) => {
+                    return (
+                      <MenuItems items={menu} key={index} depthLevel={0} />
+                    );
+                  })}
+                </ul>
+              </nav>
+            </div>
           </div>
         )}
-        {isLoginPopupOpen && (
+      {isLoginPopupOpen && (
           <div className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div ref={modalRef} className="relative p-4 w-full max-w-md max-h-full">
+            <div
+              ref={modalRef}
+              className="relative p-4 w-full max-w-md max-h-full"
+            >
               <div className="relative bg-white rounded-lg shadow">
                 <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                   <h3 className="text-xl font-semibold text-gray-900">
@@ -316,7 +369,7 @@ const Navbar: React.FC = () => {
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5"
                         placeholder="name@company.com"
                         required
-                        autoComplete='off'
+                        autoComplete="off"
                       />
                     </div>
                     <div>
@@ -335,7 +388,7 @@ const Navbar: React.FC = () => {
                         placeholder="••••••••"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5"
                         required
-                        autoComplete='off'
+                        autoComplete="off"
                       />
                     </div>
                     <div className="flex justify-between">
@@ -356,12 +409,12 @@ const Navbar: React.FC = () => {
                           Remember me
                         </label>
                       </div>
-                      <a
-                        href="#"
-                        className="text-sm text-green-500 hover:underline "
+                      <NavLink
+                        to="/forgot-password"
+                        className="text-sm text-gray-500 hover:underline "
                       >
                         Forgot Password?
-                      </a>
+                      </NavLink>
                     </div>
                     <button
                       type="submit"
@@ -371,7 +424,11 @@ const Navbar: React.FC = () => {
                     </button>
                     <div className="text-sm font-medium text-gray-500">
                       Not registered?
-                      <a href="#" className="text-green-500 hover:underline pr-2 " onClick={() => setSignUpPopupOpen(true)}>
+                      <a
+                        href="#"
+                        className="text-green-500 hover:underline pr-2 "
+                        onClick={() => setSignUpPopupOpen(true)}
+                      >
                         Register here
                       </a>
                     </div>
@@ -383,7 +440,10 @@ const Navbar: React.FC = () => {
         )}
         {isSignUpPopupOpen && (
           <div className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div ref={modalRef} className="relative p-4 w-full max-w-md max-h-full">
+            <div
+              ref={modalRef}
+              className="relative p-4 w-full max-w-md max-h-full"
+            >
               <div className="relative bg-white rounded-lg shadow">
                 <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                   <h3 className="text-xl font-semibold text-gray-900">
@@ -413,7 +473,11 @@ const Navbar: React.FC = () => {
                   </button>
                 </div>
                 <div className="p-4 md:p-5">
-                  <form className="space-y-4" onSubmit={handleSignUpSubmit} action="#">
+                  <form
+                    className="space-y-4"
+                    onSubmit={handleSignUpSubmit}
+                    action="#"
+                  >
                     <div>
                       <label
                         htmlFor="text"
@@ -430,7 +494,7 @@ const Navbar: React.FC = () => {
                         onChange={handleSignUpChange}
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5"
                         required
-                        autoComplete='off'
+                        autoComplete="off"
                       />
                     </div>
                     <div>
@@ -467,7 +531,7 @@ const Navbar: React.FC = () => {
                         onChange={handleSignUpChange}
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5"
                         required
-                        autoComplete='off'
+                        autoComplete="off"
                       />
                     </div>
                     <div className="flex justify-between">
@@ -507,7 +571,7 @@ const Navbar: React.FC = () => {
             </div>
           </div>
         )}
-      </nav>
+    </nav>
     </>
   );
 };

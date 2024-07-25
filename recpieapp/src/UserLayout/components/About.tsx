@@ -69,21 +69,21 @@ const About = () => {
               <form className="space-y-5">
                 <input
                   type="text"
-                  className="py-3 px-10 w-[500px] bg-[#f3f5f8] focus:outline-none"
+                  className="py-3 px-10 lg:w-[500px] bg-[#f3f5f8] focus:outline-none"
                   placeholder="Name"
                 />
                 <input
                   type="email"
-                  className="py-3 px-10 w-[500px] bg-[#f3f5f8] ml-10 focus:outline-none"
+                  className="py-3 px-10 lg:w-[500px] bg-[#f3f5f8] lg:ml-10 focus:outline-none"
                   placeholder="Email"
                 />
                 <input
                   type="text"
-                  className="py-3 px-10 w-[100%] bg-[#f3f5f8] focus:outline-none"
+                  className="py-3 px-10 lg:w-[100%] bg-[#f3f5f8] focus:outline-none"
                   placeholder="Subject"
                 />
                 <textarea
-                  className="py-3 px-10 w-[100%] bg-[#f3f5f8] focus:outline-none"
+                  className="py-3 px-10 lg:w-[100%] bg-[#f3f5f8] focus:outline-none"
                   placeholder="Message"
                 />
                 <div className="flex justify-center">

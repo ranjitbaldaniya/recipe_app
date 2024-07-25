@@ -11,11 +11,14 @@ import Navbar from '../Navbar';
 const RecipeDetails: React.FC = () => {
   const param = useParams();
   const url = `http://localhost:3001/recipe/details/${param.id}`;
-  const { data, loading, error, refetch } = useFetch<RecipeDetailsResponse>(url);
+  const { data, loading, error, refetch } =
+    useFetch<RecipeDetailsResponse>(url);
   const [rating, setRating] = useState<number | null>(null);
   const [comment, setComment] = useState<string>('');
   const [showAllReviews, setShowAllReviews] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [reviewToEdit, setReviewToEdit] = useState<string | null>(null);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -27,34 +30,69 @@ const RecipeDetails: React.FC = () => {
   const handleRatingChange = (newRating: number) => {
     setRating(newRating);
   };
-
   const handleSubmitReview = async () => {
     if (!rating || !comment) {
       alert('Please provide both a rating and a comment.');
       return;
     }
-
     try {
       setSubmitting(true);
-      await axios.post('http://localhost:3001/review', {
-        user_id: "667d74acb59f59d589b88399",
-        recipe_id: data?.recipe._id,
-        rating,
-        review: comment,
-      });
+      if (editMode && reviewToEdit) {
+        await axios.put(`http://localhost:3001/review/${reviewToEdit}`, {
+          user_id: param.id,
+          recipe_id: data?.recipe._id,
+          rating,
+          review: comment,
+        });
+        console.log('Review updated successfully');
+        // After update, handle edit mode reset
+        setEditMode(false); // Reset edit mode after successful update
+        setReviewToEdit(null);
+      } else {
+        await axios.post('http://localhost:3001/review', {
+          user_id: param.id,
+          recipe_id: data?.recipe._id,
+          rating,
+          review: comment,
+          approved: false, // Set to false to indicate it needs approval
+        });
+        console.log('New review added successfully');
+      }
+      // Clear input fields and stop submitting state
       setRating(null);
       setComment('');
       setSubmitting(false);
-      refetch();
+      refetch(); // Refresh reviews
     } catch (err) {
-      console.error(err);
+      console.error('Error submitting review:', err);
       setSubmitting(false);
     }
   };
+  const handleEditReview = (
+    reviewId: string,
+    existingRating: number,
+    existingComment: string,
+  ) => {
+    setEditMode(true);
+    setReviewToEdit(reviewId);
+    setRating(existingRating);
+    setComment(existingComment);
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    try {
+      await axios.delete(`http://localhost:3001/review/${reviewId}`);
+      refetch();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const approvedReviews = data?.reviews.filter((review) => review.approved);
 
   const reviewsToShow = showAllReviews
-    ? data?.reviews
-    : data?.reviews.slice(0, 3);
+    ? approvedReviews
+    : approvedReviews?.slice(0, 3);
 
   return (
     <>
@@ -69,16 +107,19 @@ const RecipeDetails: React.FC = () => {
           <div className="w-full md:w-2/3">
             <div className="recipe-headline my-5">
               <span className="text-m block text-gray-500 mb-0 ">
-                 <p className="text-xs text-[#40ba37] font-normal">
-                  {new Date(data?.recipe?.create_at!).toLocaleDateString('en-US', {
+                <p className="text-xs text-[#40ba37] font-normal">
+                  {new Date(data?.recipe?.create_at!).toLocaleDateString(
+                    'en-US',
+                    {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric',
-                  })}
+                    },
+                  )}
                 </p>
               </span>
               <h2 className="text-4xl font-bold text-[#474747] mb-8">
-              {data?.recipe.recipe_name_eng}
+                {data?.recipe.recipe_name_eng}
               </h2>
               <div className="recipe-duration border-l-4 border-[#1c8314] pl-4 py-3">
                 <h6 className="text-sm mb-2 text-black font-bold text-[16px]">
@@ -95,16 +136,18 @@ const RecipeDetails: React.FC = () => {
           </div>
 
           <div className="w-full md:w-1/3 flex flex-col items-end">
+            <div className="ratings flex space-x-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <FontAwesomeIcon
+                  key={star}
+                  icon={
+                    star <= Math.round(averageRating) ? faStar : faStarEmpty
+                  }
+                  className="text-yellow-500"
+                />
+              ))}
+            </div>
             <div className="recipe-ratings text-right my-5">
-              <div className="ratings flex space-x-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <FontAwesomeIcon
-                    key={star}
-                    icon={star <= Math.round(averageRating) ? faStar : faStarEmpty}
-                    className="text-yellow-500"
-                  />
-                ))}
-              </div>
               <a
                 href="#"
                 className="mt-4 inline-block min-w-[160px] h-[60px] text-white border-l-4 border-[#1c8314] rounded-none px-[30px] text-lg leading-[58px] font-semibold transition duration-500 capitalize bg-green-500"
@@ -117,51 +160,27 @@ const RecipeDetails: React.FC = () => {
 
         <div className="flex flex-wrap mt-10">
           <div className="w-full lg:w-2/3 mb-8 lg:mb-0">
-            {/* Single Preparation Step */}
             <div className="single-preparation-step flex mb-12">
-              {/* <h4 className="text-gray-700 flex-none w-15 mb-0 text-[#474747] text-[1.5rem] font-bold">
-                01.
-              </h4>
-              <p className="text-gray-500 text-base leading-loose font-normal text-[14px]">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Vestibulum nec varius dui. Suspendisse potenti. Vestibulum ac
-                pellentesque tortor. Aenean congue sed metus in iaculis. Cras a
-                tortor enim. Phasellus posuere vestibulum ipsum, eget lobortis
-                purus. Orci varius natoque penatibus et magnis dis parturient
-                montes, nascetur ridiculus mus.
-              </p> */}
               <div
-            className="prose prose-sm text-[#474747]"
-            dangerouslySetInnerHTML={{ __html: data?.recipe.recipe_steps_eng! }}
-          />
+                className="prose prose-sm text-[#474747]"
+                dangerouslySetInnerHTML={{
+                  __html: data?.recipe.recipe_steps_eng!,
+                }}
+              />
             </div>
-       
           </div>
 
-          {/* Ingredients */}
           <div className="w-full lg:w-1/3">
             <div className="ingredients">
               <h4 className="text-gray-700 mb-8 text-[#474747] text-[1.5rem] font-bold">
                 Ingredients
               </h4>
-       
-              {/* <div className="custom-control mb-8 flex items-center pl-10">
-                <input
-                  type="checkbox"
-                  className="custom-control-input"
-                  id="customCheck2"
-                />
-                <label
-                  className="custom-control-label ml-2 font-bold text-[16px] text-[#474747]"
-                  htmlFor="customCheck2"
-                >
-                  2 large eggs
-                </label>
-              </div> */}
-               <div
-            className="prose prose-sm text-[#474747]"
-            dangerouslySetInnerHTML={{ __html: data?.recipe.ingredients_eng! }}
-          />
+              <div
+                className="prose prose-sm text-[#474747]"
+                dangerouslySetInnerHTML={{
+                  __html: data?.recipe.ingredients_eng!,
+                }}
+              />
             </div>
           </div>
         </div>
@@ -194,7 +213,7 @@ const RecipeDetails: React.FC = () => {
                 onClick={handleSubmitReview}
                 disabled={submitting}
               >
-                {submitting ? 'Submitting...' : 'Submit'}
+                {submitting ? 'Submitting...' : editMode ? 'Update' : 'Submit'}
               </button>
             </div>
           </div>
@@ -206,7 +225,6 @@ const RecipeDetails: React.FC = () => {
               >
                 <div className="p-2 bg-gray-100">
                   <h3 className="text-lg font-semibold text-[#474747]">
-                    {/* {review.user_id.user_name} */}
                     {review.user_id ? review.user_id.user_name : ''}
                   </h3>
                   <p>
@@ -219,10 +237,31 @@ const RecipeDetails: React.FC = () => {
                     ))}
                   </p>
                   <p className="text-[#474747]">{review.review}</p>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      className="px-3 py-1 bg-blue-500 text-white rounded-lg"
+                      onClick={() =>
+                        handleEditReview(
+                          review._id,
+                          review.rating,
+                          review.review,
+                        )
+                      }
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="px-3 py-1 bg-red-500 text-white rounded-lg"
+                      onClick={() => handleDeleteReview(review._id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
-            {!showAllReviews && data?.reviews.length! > 3 && (
+
+            {!showAllReviews && approvedReviews?.length! > 3 && (
               <button
                 className="mt-4 px-6 py-2 bg-[#1c8314] text-white font-bold rounded-lg"
                 onClick={() => setShowAllReviews(true)}
