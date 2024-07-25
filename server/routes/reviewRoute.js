@@ -6,8 +6,10 @@ import {
   getAllReview,
   updateReview,
 } from "../controllers/reviewController.js";
+import { approveReview, rejectReview, getPendingReviews } from "../controllers/reviewController.js";
 
 const reviewRoute = express.Router();
+const adminRoute = express.Router();
 
 // Create a new review
 reviewRoute.post("/", createReview);
@@ -20,5 +22,9 @@ reviewRoute.put("/:id", updateReview);
 
 // Delete a review
 reviewRoute.delete("/:id", deleteReview);
+adminRoute.put("/approve/:id", approveReview);
+adminRoute.delete("/reject/:id", rejectReview);
+adminRoute.get("/pending", getPendingReviews);
+
 
 export default reviewRoute;

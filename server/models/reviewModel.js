@@ -8,6 +8,7 @@ const ReviewSchema = new Schema({
   review: { type: String, required: true },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
+  approved: { type: Boolean, default: false },
 });
 
 export const Review = mongoose.model('Review', ReviewSchema);

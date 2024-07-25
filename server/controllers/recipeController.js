@@ -89,8 +89,6 @@ export const getRecipes = async (req, res) => {
       filter.create_by = new mongoose.Types.ObjectId(userId);
     }
 
-    console.log('Filter:', filter); // Logging the filter
-
     const pageIndexInt = parseInt(pageIndex) || 1;
     const pageSizeInt = parseInt(pageSize) || 0;
 
@@ -165,78 +163,78 @@ async function getSubcategoryIds(categoryId) {
 
 
 // Get a recipe by ID
-// export const getRecipeById = async (req, res) => {
-//   try {
-//     const recipe = await Recipe.findById(req.params.id)
-//       .populate({
-//         path: 'category',
-//         select: '_id name'
-//       })
-//       .lean();
-
-//     if (!recipe) return res.status(404).json({ message: "Recipe not found" });
-
-//     const reviews = await Review.find({ recipe_id: req.params.id })
-//       .populate({
-//         path: 'user_id',
-//         select: '_id name'
-//       })
-//       .select('review rating -_id')
-//       .lean();
-
-//     recipe.reviews = reviews;
-//     res.json(recipe);
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
 export const getRecipeById = async (req, res) => {
   try {
-    // Find the category by ID
-    const categoryId = req.params.id;
-
-    const category = await Category.findById(categoryId)
+    const recipe = await Recipe.findById(req.params.id)
       .populate({
-        path: 'subcategories',
-        populate: {
-          path: 'subcategory',
-          select: '_id name status create_by create_at update_at',
-          options: { strictPopulate: false }
-        }
+        path: 'category',
+        select: '_id name'
       })
       .lean();
 
-    if (!category) {
-      return res.status(404).json({ message: "Category not found" });
-    }
+    if (!recipe) return res.status(404).json({ message: "Recipe not found" });
 
-    // Prepare the response format
-    const formattedCategory = {
-      _id: category._id,
-      name: category.name,
-      status: category.status,
-      create_by: category.create_by,
-      create_at: category.create_at,
-      update_at: category.update_at,
-      __v: category.__v,
-      subcategories: category.subcategories.map(subcategory => ({
-        _id: subcategory._id,
-        name: subcategory.name,
-        status: subcategory.status,
-        create_by: subcategory.create_by,
-        create_at: subcategory.create_at,
-        update_at: subcategory.update_at,
-        __v: subcategory.__v,
-        subcategory: subcategory.subcategory
-      }))
-    };
+    const reviews = await Review.find({ recipe_id: req.params.id })
+      .populate({
+        path: 'user_id',
+        select: '_id name'
+      })
+      .select('review rating -_id')
+      .lean();
 
-    res.json(formattedCategory);
+    recipe.reviews = reviews;
+    res.json(recipe);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: err.message });
   }
 };
+// export const getRecipeById = async (req, res) => {
+//   try {
+//     // Find the category by ID
+//     const categoryId = req.params.id;
+
+//     const category = await Category.findById(categoryId)
+//       .populate({
+//         path: 'subcategories',
+//         populate: {
+//           path: 'subcategory',
+//           select: '_id name status create_by create_at update_at',
+//           options: { strictPopulate: false }
+//         }
+//       })
+//       .lean();
+
+//     if (!category) {
+//       return res.status(404).json({ message: "Category not found" });
+//     }
+
+//     // Prepare the response format
+//     const formattedCategory = {
+//       _id: category._id,
+//       name: category.name,
+//       status: category.status,
+//       create_by: category.create_by,
+//       create_at: category.create_at,
+//       update_at: category.update_at,
+//       __v: category.__v,
+//       subcategories: category.subcategories.map(subcategory => ({
+//         _id: subcategory._id,
+//         name: subcategory.name,
+//         status: subcategory.status,
+//         create_by: subcategory.create_by,
+//         create_at: subcategory.create_at,
+//         update_at: subcategory.update_at,
+//         __v: subcategory.__v,
+//         subcategory: subcategory.subcategory
+//       }))
+//     };
+
+//     res.json(formattedCategory);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server Error" });
+//   }
+// };
 
 // Update a recipe by ID
 export const updateRecipe = async (req, res) => {

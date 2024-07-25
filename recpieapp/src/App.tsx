@@ -28,6 +28,8 @@ import MyRecipe from './UserLayout/components/MyRecipe';
 import AddUserRecipe from './UserLayout/components/AddUserRecipe';
 import MyFavorite from './UserLayout/components/MyFavorite';
 import NotFound from './UserLayout/components/NotFound';
+import AdminReviews from './components/Admin/Review/AdminReview';
+import ForgotPassword from './UserLayout/components/Pages/ForgotPassword';
 
 // Private Route Component for Users
 const UserPrivateRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -102,6 +104,15 @@ function App() {
               <>
                 <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
                 <SignUp />
+              </>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <>
+                <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+                <ForgotPassword />
               </>
             }
           />
@@ -312,6 +323,17 @@ function App() {
             </AdminPrivateRoute>
           }
         />
+
+        <Route
+          path="/admin/review"
+          element={
+            <AdminPrivateRoute>
+              <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <AdminReviews />
+            </AdminPrivateRoute>
+          }
+        />
+
         <Route
           path="/profile"
           element={

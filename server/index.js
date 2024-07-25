@@ -8,6 +8,7 @@ import recipeRoute from "./routes/recipeRoute.js";
 import categoryRoute from "./routes/categoryRoute.js";
 import favoriteRoute from "./routes/favoriteRoute.js";
 import reviewRoute from "./routes/reviewRoute.js";
+import adminRoute from "./routes/adminReviewRoute.js";
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ app.use("/recipe", recipeRoute);
 app.use("/category", categoryRoute);
 app.use("/favorite", favoriteRoute);
 app.use("/review", reviewRoute);
-
+app.use("/admin",adminRoute)
 // Static folder for images
 app.use('/images', express.static('images'));
 
