@@ -29,7 +29,9 @@ import AddUserRecipe from './UserLayout/components/AddUserRecipe';
 import MyFavorite from './UserLayout/components/MyFavorite';
 import NotFound from './UserLayout/components/NotFound';
 import AdminReviews from './components/Admin/Review/AdminReview';
-import ForgotPassword from './UserLayout/components/Pages/ForgotPassword';
+import ForgotPassword from './UserLayout/components/Pages/Forgotpassword';
+import ResetPassword from './UserLayout/components/Pages/ResetPassword';
+// import ForgotPassword from './UserLayout/components/Pages/ForgotPassword';
 
 // Private Route Component for Users
 const UserPrivateRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -116,6 +118,8 @@ function App() {
               </>
             }
           />
+         <Route path="/reset-password" element={<ResetPassword />} />
+
           <Route
             path="/contact"
             element={
@@ -134,6 +138,7 @@ function App() {
               </>
             }
           />
+       
           <Route
             path="/user-recpie"
             element={

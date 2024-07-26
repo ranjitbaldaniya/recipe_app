@@ -274,12 +274,12 @@ export const deleteRecipe = async (req, res) => {
 //Get recipe details by id
 export const getRecipeDetails = async (req, res) => {
   try {
-    const recipe = await Recipe.findById(req.params.id).lean();
+      const recipe = await Recipe.findById(req.params.id).lean();
     if (!recipe) {
       return res.status(404).json({ message: "Recipe not found" });
     }
     const reviews = await Review.find({ recipe_id: req.params.id })
-      .populate("user_id")
+      .populate("user_id", "user_name","email",)
       .lean();
       res.json({ recipe, reviews });
   } catch (error) {

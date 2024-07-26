@@ -11,7 +11,9 @@ const UserSchema = new Schema({
   update_At: { type: Date, default: Date.now },
   update_by: { type: Schema.Types.ObjectId, ref: 'User' },
   delete_at: { type: Date },
-  delete_by: { type: Schema.Types.ObjectId, ref: 'User' }
+  delete_by: { type: Schema.Types.ObjectId, ref: 'User' },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
 });
 
 export const UserModel = mongoose.model('User', UserSchema);

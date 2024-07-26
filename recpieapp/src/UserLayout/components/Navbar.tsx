@@ -114,18 +114,21 @@ const Navbar: React.FC = () => {
     const response = await axios.get('http://localhost:3001/category');
     setCategory(response.data);
   };
+
   useEffect(() => {
     getCategory();
   }, []);
+
   const handleSignOut = () => {
     logout();
     setShowLogin(true);
     localStorage.removeItem('user_name');
     setProfileOpen(false);
+    navigate('/')
   };
 
-  const handleSignUpSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSignUpSubmit = async () => {
+    // e.preventDefault();
     setSignUpPopupOpen(false);
 
     try {
@@ -166,143 +169,151 @@ const Navbar: React.FC = () => {
     );
   };
 
-  const handleMegaMenuClick = () => {
+  const handleMegaMenuClick = async() => {
+    // const response = await axios.get('http://localhost:3001/category');
+    // setCategory(response.data);
     setMegaMenuOpen(!isMegaMenuOpen);
     navigate('/');
   };
+  
   const transformedCategoryItems = transformCategoryData(category);
- const toggleMenu = () => {
+
+  const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-const handleClick = async () => {
-  try {
-    const response = await axios.get('http://localhost:3001/recipe');
-    console.log('Recipes:', response.data.recipes);
-  } catch (error) {
-    console.error('Error fetching recipes:', error);
-  }
-};
+  const handleClick = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/recipe');
+      console.log('Recipes:', response.data.recipes);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+    }
+  };
   return (
     <>
-        <nav>
-      <div className="container mx-auto px-4 py-2 flex justify-between items-center">
-        <div>
-          <img src={logo} alt="Logo" />
-        </div>
-        <div className="md:hidden">
-          <button
-            onClick={toggleMenu}
-            className="text-gray-900 hover:text-green-500 focus:outline-none"
-          >
-            <FaBars size={25} />
-          </button>
-        </div>
-        <ul className={` justify-center items-center flex-col md:flex-row md:flex ${isMenuOpen ? 'flex' : 'hidden'} md:space-x-6  md:static absolute top-30 left-0 right-0 bg-white md:bg-transparent shadow-lg md:shadow-none`}>
-          <li>
-            <NavLink
-              to="/"
-              className="hover:text-green-500 text-sm font-semibold text-[#474747]"
-              onClick={handleClick}
-              style={({ isActive }) => ({
-                color: isActive ? 'green' : '',
-              })}
-            >
-              HOME
-            </NavLink>
-          </li>
-          <li className="relative group">
+      <nav>
+        <div className="container mx-auto px-4 py-2 flex justify-between items-center">
+          <div>
+            <img src={logo} alt="Logo" />
+          </div>
+          <div className="md:hidden">
             <button
-              onClick={handleMegaMenuClick}
-              className={`${
-                isMegaMenuOpen ? 'text-green-500' : ''
-              } focus:outline-none text-sm font-semibold text-[#474747]`}
+              onClick={toggleMenu}
+              className="text-gray-900 hover:text-green-500 focus:outline-none"
             >
-              RECIPE
+              <FaBars size={25} />
             </button>
-          </li>
-          <li>
-            <NavLink
-              to="/aboutus"
-              className="hover:text-green-500 text-sm font-semibold text-[#474747]"
-              style={({ isActive }) => ({
-                color: isActive ? 'green' : '',
-              })}
-            >
-              ABOUT US
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/contact"
-              className="hover:text-green-500 text-sm font-semibold text-[#474747]"
-              style={({ isActive }) => ({
-                color: isActive ? 'green' : '',
-              })}
-            >
-              CONTACT US
-            </NavLink>
-          </li>
-          {showLogin && !user_name && (
+          </div>
+          <ul
+            className={` justify-center items-center flex-col md:flex-row md:flex ${
+              isMenuOpen ? 'flex' : 'hidden'
+            } md:space-x-6  md:static absolute top-30 left-0 right-0 bg-white md:bg-transparent shadow-lg md:shadow-none`}
+          >
+            <li>
+              <NavLink
+                to="/"
+                className="hover:text-green-500 text-sm font-semibold text-[#474747]"
+                onClick={handleClick}
+                style={({ isActive }) => ({
+                  color: isActive ? 'green' : '',
+                })}
+              >
+                HOME
+              </NavLink>
+            </li>
             <li className="relative group">
               <button
-                onClick={() => setLoginPopupOpen(!isLoginPopupOpen)}
-                className="hover:text-green-500 focus:outline-none text-sm font-semibold text-[#474747]"
+                onClick={handleMegaMenuClick}
+                className={`${
+                  isMegaMenuOpen ? 'text-green-500' : ''
+                } focus:outline-none text-sm font-semibold text-[#474747]`}
               >
-                LOGIN
+                RECIPE
               </button>
             </li>
-          )}
-          {user_name && (
-            <li className="relative group">
-              <button
-                onClick={() => setProfileOpen(!isProfileOpen)}
-                className="hover:text-green-500 focus:outline-none text-sm font-semibold text-[#474747]"
+            <li>
+              <NavLink
+                to="/aboutus"
+                className="hover:text-green-500 text-sm font-semibold text-[#474747]"
+                style={({ isActive }) => ({
+                  color: isActive ? 'green' : '',
+                })}
               >
-                <FaUserCircle size={25} />
-              </button>
-              {isProfileOpen && (
-                <ul className="absolute right-0 w-48 bg-white text-gray-900 shadow-lg z-1">
-                  <div ref={modalRef} className="relative">
-                    <div className="px-4 py-3">
-                      <span className="block hover:bg-gray-200 text-green-500 font-bold">
-                        {userName}{' '}
-                      </span>
+                ABOUT US
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/contact"
+                className="hover:text-green-500 text-sm font-semibold text-[#474747]"
+                style={({ isActive }) => ({
+                  color: isActive ? 'green' : '',
+                })}
+              >
+                CONTACT US
+              </NavLink>
+            </li>
+            {showLogin && !user_name && (
+              <li className="relative group">
+                <button
+                  onClick={() => setLoginPopupOpen(!isLoginPopupOpen)}
+                  className="hover:text-green-500 focus:outline-none text-sm font-semibold text-[#474747]"
+                >
+                  LOGIN
+                </button>
+              </li>
+            )}
+            {user_name && (
+              <li className="relative group">
+                <button
+                  onClick={() => setProfileOpen(!isProfileOpen)}
+                  className="hover:text-green-500 focus:outline-none text-sm font-semibold text-[#474747]"
+                >
+                  <FaUserCircle size={25} />
+                </button>
+                {isProfileOpen && (
+                  <ul className="absolute right-0 w-48 bg-white text-gray-900 shadow-lg z-1">
+                    <div ref={modalRef} className="relative">
+                      <div className="px-4 py-3">
+                        <span className="block hover:bg-gray-200 text-green-500 font-bold">
+                          {userName}
+                        </span>
+                      </div>
+                      <li>
+                        <NavLink
+                          to="/myrecipe"
+                          onClick={() => setProfileOpen(false)}
+                          className="block hover:bg-gray-200 px-4 py-2"
+                        >
+                          My Recipe
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to="/favorites"
+                          onClick={() => setProfileOpen(false)}
+                          className="block hover:bg-gray-200 px-4 py-2"
+                        >
+                          Favorites
+                        </NavLink>
+                      </li>
+                      <li>
+                        <button
+                          onClick={handleSignOut}
+                          className="block hover:bg-gray-200 px-4 py-2"
+                        >
+                          Logout
+                        </button>
+                      </li>
                     </div>
-                    <li>
-                      <NavLink
-                        to="/myrecipe"
-                        onClick={() => setProfileOpen(false)}
-                        className="block hover:bg-gray-200 px-4 py-2"
-                      >
-                        My Recipe
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        to="/favorites"
-                        onClick={() => setProfileOpen(false)}
-                        className="block hover:bg-gray-200 px-4 py-2"
-                      >
-                        Favorites
-                      </NavLink>
-                    </li>
-                    <li>
-                      <button
-                        onClick={handleSignOut}
-                        className="block hover:bg-gray-200 px-4 py-2"
-                      >
-                        Logout
-                      </button>
-                    </li>
-                  </div>
-                </ul>
-              )}
-            </li>
-          )}
-        </ul>
-      </div>
-      {isMegaMenuOpen && (
+                  </ul>
+                )}
+              </li>
+            )}
+          </ul>
+        </div>
+        {isMegaMenuOpen && (
           <div className="absolute z-10  w-[97%]  shadow-2xl text-sm bg-white">
             <div ref={modalRef}>
               <nav className="desktop-nav flex justify-center items-center">
@@ -317,127 +328,127 @@ const handleClick = async () => {
             </div>
           </div>
         )}
-      {isLoginPopupOpen && (
-          <div className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div
-              ref={modalRef}
-              className="relative p-4 w-full max-w-md max-h-full"
-            >
-              <div className="relative bg-white rounded-lg shadow">
-                <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    Login to our platform
-                  </h3>
-                  <button
-                    onClick={() => setLoginPopupOpen(false)}
-                    type="button"
-                    className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
-                    data-modal-hide="authentication-modal"
-                  >
-                    <svg
-                      className="w-3 h-3"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 14 14"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                      />
-                    </svg>
-                    <span className="sr-only">Close modal</span>
-                  </button>
-                </div>
-                <div className="p-4 md:p-5">
-                  <form className="space-y-4" onSubmit={handleLoginSubmit}>
-                    <div>
-                      <label
-                        htmlFor="email"
-                        className="block mb-2 text-sm font-medium text-gray-900"
-                      >
-                        Your email
-                      </label>
-                      <input
-                        onChange={handleLoginChange}
-                        value={formData.email}
-                        type="email"
-                        name="email"
-                        id="email"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5"
-                        placeholder="name@company.com"
-                        required
-                        autoComplete="off"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="password"
-                        className="block mb-2 text-sm font-medium text-gray-900"
-                      >
-                        Your password
-                      </label>
-                      <input
-                        onChange={handleLoginChange}
-                        value={formData.password}
-                        type="password"
-                        name="password"
-                        id="password"
-                        placeholder="••••••••"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5"
-                        required
-                        autoComplete="off"
-                      />
-                    </div>
-                    <div className="flex justify-between">
-                      <div className="flex items-start">
-                        <div className="flex items-center h-5">
-                          <input
-                            id="remember"
-                            type="checkbox"
-                            value=""
-                            className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3"
-                            required
-                          />
-                        </div>
-                        <label
-                          htmlFor="remember"
-                          className="ms-2 text-sm font-medium text-gray-900"
-                        >
-                          Remember me
-                        </label>
-                      </div>
-                      <NavLink
-                        to="/forgot-password"
-                        className="text-sm text-gray-500 hover:underline "
-                      >
-                        Forgot Password?
-                      </NavLink>
-                    </div>
+          {isLoginPopupOpen && (
+            <div className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+              <div
+                ref={modalRef}
+                className="relative p-4 w-full max-w-md max-h-full"
+              >
+                <div className="relative bg-white rounded-lg shadow">
+                  <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      Login to our platform
+                    </h3>
                     <button
-                      type="submit"
-                      className="w-full text-white bg-green-500 focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center "
+                      onClick={() => setLoginPopupOpen(false)}
+                      type="button"
+                      className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+                      data-modal-hide="authentication-modal"
                     >
-                      Login to your account
-                    </button>
-                    <div className="text-sm font-medium text-gray-500">
-                      Not registered?
-                      <a
-                        href="#"
-                        className="text-green-500 hover:underline pr-2 "
-                        onClick={() => setSignUpPopupOpen(true)}
+                      <svg
+                        className="w-3 h-3"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 14 14"
                       >
-                        Register here
-                      </a>
-                    </div>
-                  </form>
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                        />
+                      </svg>
+                      <span className="sr-only">Close modal</span>
+                    </button>
+                  </div>
+                  <div className="p-4 md:p-5">
+                    <form className="space-y-4" onSubmit={handleLoginSubmit}>
+                      <div>
+                        <label
+                          htmlFor="email"
+                          className="block mb-2 text-sm font-medium text-gray-900"
+                        >
+                          Your email
+                        </label>
+                        <input
+                          onChange={handleLoginChange}
+                          value={formData.email}
+                          type="email"
+                          name="email"
+                          id="email"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5"
+                          placeholder="name@company.com"
+                          required
+                          autoComplete="off"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="password"
+                          className="block mb-2 text-sm font-medium text-gray-900"
+                        >
+                          Your password
+                        </label>
+                        <input
+                          onChange={handleLoginChange}
+                          value={formData.password}
+                          type="password"
+                          name="password"
+                          id="password"
+                          placeholder="••••••••"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5"
+                          required
+                          autoComplete="off"
+                        />
+                      </div>
+                      <div className="flex justify-between">
+                        <div className="flex items-start">
+                          <div className="flex items-center h-5">
+                            <input
+                              id="remember"
+                              type="checkbox"
+                              value=""
+                              className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3"
+                              required
+                            />
+                          </div>
+                          <label
+                            htmlFor="remember"
+                            className="ms-2 text-sm font-medium text-gray-900"
+                          >
+                            Remember me
+                          </label>
+                        </div>
+                        <NavLink
+                          to="/forgot-password"
+                          className="text-sm text-gray-500 hover:underline "
+                        >
+                          Forgot Password?
+                        </NavLink>
+                      </div>
+                      <button
+                        type="submit"
+                        className="w-full text-white bg-green-500 focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center "
+                      >
+                        Login to your account
+                      </button>
+                      <div className="text-sm font-medium text-gray-500">
+                        Not registered?
+                        <a
+                          href="#"
+                          className="text-green-500 hover:underline pr-2 "
+                          onClick={() => setSignUpPopupOpen(true)}
+                        >
+                          Register here
+                        </a>
+                      </div>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
         {isSignUpPopupOpen && (
           <div className=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div
@@ -552,12 +563,9 @@ const handleClick = async () => {
                           Remember me
                         </label>
                       </div>
-                      <a
-                        href="#"
-                        className="text-sm text-green-500 hover:underline "
-                      >
-                        Forgot Password?
-                      </a>
+                      <a href="/forgot-password" className="text-sm text-gray-500 hover:underline">
+                      Forgot Password?
+                    </a>
                     </div>
                     <button
                       type="submit"
@@ -571,7 +579,7 @@ const handleClick = async () => {
             </div>
           </div>
         )}
-    </nav>
+      </nav>
     </>
   );
 };

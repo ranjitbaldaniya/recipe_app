@@ -19,7 +19,9 @@ const RecipeDetails: React.FC = () => {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [reviewToEdit, setReviewToEdit] = useState<string | null>(null);
-
+  const userString:any = localStorage.getItem('user');
+  const user = JSON.parse(userString);
+  const userId = user.id;
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -39,7 +41,7 @@ const RecipeDetails: React.FC = () => {
       setSubmitting(true);
       if (editMode && reviewToEdit) {
         await axios.put(`http://localhost:3001/review/${reviewToEdit}`, {
-          user_id: param.id,
+          user_id: userId,
           recipe_id: data?.recipe._id,
           rating,
           review: comment,
@@ -50,7 +52,7 @@ const RecipeDetails: React.FC = () => {
         setReviewToEdit(null);
       } else {
         await axios.post('http://localhost:3001/review', {
-          user_id: param.id,
+          user_id: userId,
           recipe_id: data?.recipe._id,
           rating,
           review: comment,
@@ -225,7 +227,7 @@ const RecipeDetails: React.FC = () => {
               >
                 <div className="p-2 bg-gray-100">
                   <h3 className="text-lg font-semibold text-[#474747]">
-                    {review.user_id ? review.user_id.user_name : ''}
+                    { review.user_id.user_name}
                   </h3>
                   <p>
                     {Array.from({ length: 5 }, (_, index) => (
@@ -238,6 +240,8 @@ const RecipeDetails: React.FC = () => {
                   </p>
                   <p className="text-[#474747]">{review.review}</p>
                   <div className="flex justify-end gap-2">
+                    {userId == review.user_id._id ? 
+                    <>
                     <button
                       className="px-3 py-1 bg-blue-500 text-white rounded-lg"
                       onClick={() =>
@@ -256,6 +260,8 @@ const RecipeDetails: React.FC = () => {
                     >
                       Delete
                     </button>
+                    </>
+                    : '' }
                   </div>
                 </div>
               </div>

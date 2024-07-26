@@ -15,11 +15,11 @@ const Homepage = () => {
       {/* <Header /> */}
       {/* <div className='p-12'> */}
       <Navbar />
-      <CarouselComponent />
+      {/* <CarouselComponent />
       <Cards />
-      <BestRecipe />
+      <BestRecipe /> */}
       {/* </div> */}
-      <FreeRecipe />
+      {/* <FreeRecipe /> */}
       <RecipeList />
       <Subscribe />
       <FollowInstagram />

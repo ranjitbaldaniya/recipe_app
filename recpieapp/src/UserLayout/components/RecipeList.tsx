@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { useCategory } from '../components/CategoryContext';
+import { notify } from '../../common/Toast';
 
 interface Review {
   rating: number;
@@ -61,6 +62,9 @@ const RecipeList = () => {
   const handleFavoriteClick = async (recipeId: string) => {
     try {
       const userId = id;
+      if(!userId){
+        notify('Login First', { type: 'error' });
+      }
       if (favorites.includes(recipeId)) {
         const favoriteId = await getFavoriteId(recipeId);
         if (favoriteId) {
@@ -85,6 +89,16 @@ const RecipeList = () => {
     }
   };
 
+  const handleRecipeDetails = (item:any) =>{
+    const userId = id;
+    if(!userId){
+      notify('Login First', { type: 'error' });
+    }
+    else{
+      navigate(`/recipe/details/${item}`)
+    }
+  }
+
   useEffect(() => {
     getRecipes();
     getFavorites();
@@ -106,7 +120,7 @@ const RecipeList = () => {
                 src={`http://localhost:3001/${item.images}`}
                 className="w-full h-auto object-cover cursor-pointer"
                 alt={item.recipe_name_eng}
-                onClick={() => navigate(`/recipe/details/${item._id}`)}
+                onClick={()=>handleRecipeDetails(item._id)}
               />
             </div>
             <div>
