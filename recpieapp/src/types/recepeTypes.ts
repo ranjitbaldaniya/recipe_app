@@ -22,8 +22,14 @@ export interface Review {
 export interface Recipe {
     _id: string;
     recipe_name_eng: string;
+    recipe_steps_hindi?: string;
+    recipe_steps_guj?: string;
     ingredients_eng: string;
+    ingredients_hindi?: string;
+    ingredients_guj?: string;
     recipe_steps_eng: string;
+    recipe_name_hindi?: string;
+    recipe_name_guj?: string;
     category: string;
     num_of_people_to_served: number;
     cooking_time:number;

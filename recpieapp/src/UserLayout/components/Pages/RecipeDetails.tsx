@@ -14,6 +14,7 @@ const RecipeDetails: React.FC = () => {
   const { data, loading, error, refetch } =
     useFetch<RecipeDetailsResponse>(url);
   const [rating, setRating] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<'eng' | 'hindi' | 'guj'>('eng');
   const [comment, setComment] = useState<string>('');
   const [showAllReviews, setShowAllReviews] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -47,8 +48,7 @@ const RecipeDetails: React.FC = () => {
           review: comment,
         });
         console.log('Review updated successfully');
-        // After update, handle edit mode reset
-        setEditMode(false); // Reset edit mode after successful update
+        setEditMode(false);
         setReviewToEdit(null);
       } else {
         await axios.post('http://localhost:3001/review', {
@@ -56,15 +56,14 @@ const RecipeDetails: React.FC = () => {
           recipe_id: data?.recipe._id,
           rating,
           review: comment,
-          approved: false, // Set to false to indicate it needs approval
+          approved: false,
         });
         console.log('New review added successfully');
       }
-      // Clear input fields and stop submitting state
       setRating(null);
       setComment('');
       setSubmitting(false);
-      refetch(); // Refresh reviews
+      refetch();
     } catch (err) {
       console.error('Error submitting review:', err);
       setSubmitting(false);
@@ -100,11 +99,48 @@ const RecipeDetails: React.FC = () => {
     <>
       <Navbar />
       <div className="container mx-auto p-20 bg-white">
+        <div className='flex justify-center'>
         <img
           src={`http://localhost:3001/${data?.recipe.images}`}
           alt="Recipe Banner"
-          className="w-full h-auto mb-6"
+          className="w-150 h-150 mb-6"
         />
+        </div>
+         <div className="flex justify-center space-x-4 mb-4 ">
+            <button
+              type="button"
+              className={`py-2 px-4 ${
+                activeTab === 'eng'
+                  ? 'bg-green-500 text-white '
+                  : 'bg-gray-300  font-bold'
+              } rounded`}
+              onClick={() => setActiveTab('eng')}
+            >
+              English
+            </button>
+            <button
+              type="button"
+              className={`py-2 px-4 ${
+                activeTab === 'hindi'
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-300  font-bold'
+              } rounded`}
+              onClick={() => setActiveTab('hindi')}
+            >
+              Hindi
+            </button>
+            <button
+              type="button"
+              className={`py-2 px-4 ${
+                activeTab === 'guj'
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-300  font-bold'
+              } rounded`}
+              onClick={() => setActiveTab('guj')}
+            >
+              Gujarati
+            </button>
+          </div>
         <div className="flex flex-col md:flex-row gap-4">
           <div className="w-full md:w-2/3">
             <div className="recipe-headline my-5">
@@ -121,7 +157,21 @@ const RecipeDetails: React.FC = () => {
                 </p>
               </span>
               <h2 className="text-4xl font-bold text-[#474747] mb-8">
-                {data?.recipe.recipe_name_eng}
+              {activeTab === 'eng' && (
+              <>
+              {data?.recipe.recipe_name_eng}
+              </>
+              )}
+              {activeTab === 'guj' && (
+              <>
+                {data?.recipe.recipe_name_guj}
+              </>
+              )}
+              {activeTab === 'hindi' && (
+              <>
+              {data?.recipe.recipe_name_hindi}
+              </>
+              )}
               </h2>
               <div className="recipe-duration border-l-4 border-[#1c8314] pl-4 py-3">
                 <h6 className="text-sm mb-2 text-black font-bold text-[16px]">
@@ -163,12 +213,30 @@ const RecipeDetails: React.FC = () => {
         <div className="flex flex-wrap mt-10">
           <div className="w-full lg:w-2/3 mb-8 lg:mb-0">
             <div className="single-preparation-step flex mb-12">
+            {activeTab === 'eng' && (
               <div
                 className="prose prose-sm text-[#474747]"
                 dangerouslySetInnerHTML={{
                   __html: data?.recipe.recipe_steps_eng!,
                 }}
               />
+            )}
+            {activeTab === 'hindi' && (
+              <div
+                className="prose prose-sm text-[#474747]"
+                dangerouslySetInnerHTML={{
+                  __html: data?.recipe.recipe_steps_hindi!,
+                }}
+              />
+            )}
+            {activeTab === 'guj' && (
+              <div
+                className="prose prose-sm text-[#474747]"
+                dangerouslySetInnerHTML={{
+                  __html: data?.recipe.recipe_steps_guj!,
+                }}
+              />
+            )}
             </div>
           </div>
 
@@ -177,12 +245,30 @@ const RecipeDetails: React.FC = () => {
               <h4 className="text-gray-700 mb-8 text-[#474747] text-[1.5rem] font-bold">
                 Ingredients
               </h4>
+              {activeTab === 'eng' && (
               <div
                 className="prose prose-sm text-[#474747]"
                 dangerouslySetInnerHTML={{
                   __html: data?.recipe.ingredients_eng!,
                 }}
               />
+              )}
+               {activeTab === 'guj' && (
+              <div
+                className="prose prose-sm text-[#474747]"
+                dangerouslySetInnerHTML={{
+                  __html: data?.recipe.ingredients_guj!,
+                }}
+              />
+              )}
+               {activeTab === 'hindi' && (
+              <div
+                className="prose prose-sm text-[#474747]"
+                dangerouslySetInnerHTML={{
+                  __html: data?.recipe.ingredients_hindi!,
+                }}
+              />
+              )}
             </div>
           </div>
         </div>

@@ -37,7 +37,6 @@ const RecipeList = () => {
       console.error('Error fetching recipes:', error);
     }
   };
-
   const getFavorites = async () => {
     try {
       const userId = id;
@@ -118,7 +117,7 @@ const RecipeList = () => {
             <div className="w-30 h-30 overflow-hidden">
               <img
                 src={`http://localhost:3001/${item.images}`}
-                className="w-full h-auto object-cover cursor-pointer"
+                className="w-full h-50 object-cover cursor-pointer"
                 alt={item.recipe_name_eng}
                 onClick={()=>handleRecipeDetails(item._id)}
               />
