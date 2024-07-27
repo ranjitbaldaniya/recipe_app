@@ -227,7 +227,7 @@ const RecipeDetails: React.FC = () => {
               >
                 <div className="p-2 bg-gray-100">
                   <h3 className="text-lg font-semibold text-[#474747]">
-                    { review.user_id.user_name}
+                    {review.user_id ? review.user_id!.user_name! : '' }
                   </h3>
                   <p>
                     {Array.from({ length: 5 }, (_, index) => (
@@ -240,7 +240,7 @@ const RecipeDetails: React.FC = () => {
                   </p>
                   <p className="text-[#474747]">{review.review}</p>
                   <div className="flex justify-end gap-2">
-                    {userId == review.user_id._id ? 
+                    {userId == review.user_id!._id! ?
                     <>
                     <button
                       className="px-3 py-1 bg-blue-500 text-white rounded-lg"

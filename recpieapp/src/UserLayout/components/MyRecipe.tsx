@@ -39,27 +39,6 @@ const MyRecipe = () => {
             console.error("Error fetching recipes:", error);
         }
     };
-    // const postUpdatedUserRecipes = async () => {
-    //     const user = JSON.parse(localStorage.getItem('user') as any);
-    //     const id = user.id;
-    //     try {
-    //         const response = await axios.put(`http://localhost:3001/recipe/${id}`);
-    //         setRecipes(response.data.recipes);
-    //     } catch (error) {
-    //         console.error("Error fetching recipes:", error);
-    //     }
-    // };
-    // const getEditUserRecipes = async () => {
-    //     navigate(`/add-recipe`)
-    //     const recipeId = recipes[0]._id;
-    //     try {
-    //         const response = await axios.get(`http://localhost:3001/recipe/${recipeId}`);
-    //         console.log("response", response)
-    //         setRecipes(response.data.recipes);
-    //     } catch (error) {
-    //         console.error("Error fetching recipes:", error);
-    //     }
-    // };
 
     const handleEditClick = (recipe: Recipe) => {
         navigate(`/add-recipe`, { state: { recipe } });
@@ -111,18 +90,6 @@ const MyRecipe = () => {
         }
       };
 
-    // const handleFavoriteChange = (recipeId: string) => {
-    //     setRecipes(prevRecipes => prevRecipes.map(recipe => {
-    //         if (recipe._id === recipeId) {
-    //             return {
-    //                 ...recipe,
-    //                 userFavorite: !recipe.userFavorite
-    //             };
-    //         }
-    //         return recipe;
-    //     }));
-    // };
-
     useEffect(() => {
         getUserRecipesList();
         getFavorites();
@@ -162,7 +129,7 @@ const MyRecipe = () => {
                                     day: 'numeric',
                                 })}
                             </p>
-                            <p className="text-lg font-semibold text-black">
+                            <p className="text-lg font-semibold text-black cursor-pointer" onClick={() => navigate(`/recipe/details/${item._id}`)}>
                                 {item.recipe_name_eng}
                             </p>
                             <div>

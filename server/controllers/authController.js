@@ -38,6 +38,7 @@ export const forgotPasswordController = async (req, res) => {
         pass: 'xarg vrod ltdt vjmj'
       },
     });
+    const resetLink = `http://localhost:5173/reset-password?token=${token}`;
 
     const mailOptions = {
       to: user.email,
@@ -45,7 +46,7 @@ export const forgotPasswordController = async (req, res) => {
       subject: 'Password Reset',
       text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
              Please click on the following link, or paste this into your browser to complete the process:\n\n
-             http://${req.headers.host}/auth/reset-password/${token}\n\n
+             ${resetLink}\n\n
              If you did not request this, please ignore this email and your password will remain unchanged.\n`,
     };
 

@@ -279,7 +279,7 @@ export const getRecipeDetails = async (req, res) => {
       return res.status(404).json({ message: "Recipe not found" });
     }
     const reviews = await Review.find({ recipe_id: req.params.id })
-      .populate("user_id", "user_name","email",)
+      .populate("user_id", "user_name")
       .lean();
       res.json({ recipe, reviews });
   } catch (error) {
