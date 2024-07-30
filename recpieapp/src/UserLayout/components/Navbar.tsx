@@ -105,8 +105,8 @@ const Navbar: React.FC = () => {
         setUserName(response.data.user.user_name);
         setShowLogin(false);
       }
-    } catch (error) {
-      notify('Error logging in. Please try again.', { type: 'error' });
+    } catch (error:any) {
+      notify(error.response.data.message, { type: 'error' });
     }
   };
 
@@ -128,7 +128,6 @@ const Navbar: React.FC = () => {
   };
 
   const handleSignUpSubmit = async () => {
-    // e.preventDefault();
     setSignUpPopupOpen(false);
 
     try {
@@ -143,8 +142,8 @@ const Navbar: React.FC = () => {
         setUserName(response.data.user.user_name);
         setShowLogin(false);
       }
-    } catch (error) {
-      notify('Error SignUp in:', { type: 'error' });
+    } catch (error:any) {
+      notify(error.response.data.message, { type: 'error' });
     }
   };
 
@@ -170,12 +169,13 @@ const Navbar: React.FC = () => {
   };
 
   const handleMegaMenuClick = async() => {
-    // const response = await axios.get('http://localhost:3001/category');
-    // setCategory(response.data);
     setMegaMenuOpen(!isMegaMenuOpen);
     navigate('/');
   };
-  
+  const handleAll = ()=>{
+    window.location.reload()
+    navigate('/')
+  }
   const transformedCategoryItems = transformCategoryData(category);
 
   const toggleMenu = () => {
@@ -324,6 +324,7 @@ const Navbar: React.FC = () => {
                     );
                   })}
                 </ul>
+                <button onClick={handleAll}>All</button>
               </nav>
             </div>
           </div>

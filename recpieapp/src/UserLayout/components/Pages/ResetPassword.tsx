@@ -31,7 +31,7 @@ const ResetPassword = () => {
       }
     } catch (error:any) {
       setMessage('Error resetting password. Please try again.');
-      notify(error, { type: 'error' })
+      notify(error.response.data.message, { type: 'error' })
     }
   };
 

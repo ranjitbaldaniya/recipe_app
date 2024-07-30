@@ -1,9 +1,18 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { useCategory } from '../components/CategoryContext';
 import { notify } from '../../common/Toast';
+import {
+  useAddFavoriteMutation,
+  useDeleteFavoriteMutation,
+  useGetFavoritesIdMutation,
+  useGetFavoritesMutation,
+} from '../api/favorite.api';
+import {
+  useGetAllRecipeQuery,
+  useGetRecipeByCategoryMutation,
+} from '../api/Recipe.api';
 
 interface Review {
   rating: number;
@@ -28,20 +37,22 @@ const RecipeList = () => {
   const user = JSON.parse(localStorage.getItem('user') as any);
   const id = user?.id || '';
   const { categoryId } = useCategory();
+  const { data, error } = useGetAllRecipeQuery();
+  const [deleteFavorite] = useDeleteFavoriteMutation();
+  const [addFavorite] = useAddFavoriteMutation();
+  const [favorite] = useGetFavoritesMutation();
+  const [favoriteId] = useGetFavoritesIdMutation();
+  const [recipeByCategory] = useGetRecipeByCategoryMutation();
 
-  const getRecipes = async () => {
-    try {
-      const response = await axios.get('http://localhost:3001/recipe');
-      setRecipes(response.data.recipes);
-    } catch (error) {
-      console.error('Error fetching recipes:', error);
-    }
-  };
   const getFavorites = async () => {
     try {
       const userId = id;
-      const response = await axios.get(`http://localhost:3001/favorite/user/${userId}`);
-      setFavorites(response.data.map((fav: { recipe_id: { _id: string } }) => fav.recipe_id._id));
+      const response = await favorite(userId);
+      setFavorites(
+        response.data.map(
+          (fav: { recipe_id: { _id: string } }) => fav.recipe_id._id,
+        ),
+      );
     } catch (error) {
       console.error('Error fetching favorites:', error);
     }
@@ -50,8 +61,10 @@ const RecipeList = () => {
   const getFavoriteId = async (recipeId: string) => {
     try {
       const userId = id;
-      const response = await axios.get(`http://localhost:3001/favorite/user/${userId}`);
-      const favorite = response.data.find((fav: { recipe_id: { _id: string } }) => fav.recipe_id._id === recipeId);
+      const response = await favoriteId(userId);
+      const favorite = response.data.find(
+        (fav: { recipe_id: { _id: string } }) => fav.recipe_id._id === recipeId,
+      );
       return favorite?._id;
     } catch (error) {
       console.error('Error fetching favorite ID:', error);
@@ -61,17 +74,17 @@ const RecipeList = () => {
   const handleFavoriteClick = async (recipeId: string) => {
     try {
       const userId = id;
-      if(!userId){
+      if (!userId) {
         notify('Login First', { type: 'error' });
       }
       if (favorites.includes(recipeId)) {
         const favoriteId = await getFavoriteId(recipeId);
         if (favoriteId) {
-          await axios.delete(`http://localhost:3001/favorite/${favoriteId}`);
+          await deleteFavorite(favoriteId);
           setFavorites(favorites.filter((fav) => fav !== recipeId));
         }
       } else {
-        await axios.post('http://localhost:3001/favorite', { user_id: userId, recipe_id: recipeId });
+        await addFavorite({ user_id: userId, recipe_id: recipeId }).unwrap();
         setFavorites([...favorites, recipeId]);
       }
     } catch (error) {
@@ -81,25 +94,32 @@ const RecipeList = () => {
 
   const getRecipesByCategory = async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/recipe?category=${categoryId}`);
+      const response = await recipeByCategory(categoryId);
       setRecipes(response.data.recipes);
     } catch (error) {
       console.error('Error fetching recipes:', error);
     }
   };
 
-  const handleRecipeDetails = (item:any) =>{
+  const handleRecipeDetails = (item: any) => {
     const userId = id;
-    if(!userId){
+    if (!userId) {
       notify('Login First', { type: 'error' });
+    } else {
+      navigate(`/recipe/details/${item}`);
     }
-    else{
-      navigate(`/recipe/details/${item}`)
-    }
-  }
+  };
 
   useEffect(() => {
-    getRecipes();
+    if (data) {
+      setRecipes(data.recipes);
+    }
+    if (error) {
+      console.error('Error fetching recipes:', error);
+    }
+  }, [data, error]);
+
+  useEffect(() => {
     getFavorites();
   }, []);
 
@@ -112,14 +132,14 @@ const RecipeList = () => {
   return (
     <div className="container mx-auto py-20">
       <div className="flex gap-10 flex-wrap">
-        {recipes.map((item) => (
+        {recipes.map((item: any) => (
           <div key={item._id} className="">
             <div className="w-30 h-30 overflow-hidden">
               <img
                 src={`http://localhost:3001/${item.images}`}
                 className="w-full h-50 object-cover cursor-pointer"
                 alt={item.recipe_name_eng}
-                onClick={()=>handleRecipeDetails(item._id)}
+                onClick={() => handleRecipeDetails(item._id)}
               />
             </div>
             <div>
@@ -130,7 +150,12 @@ const RecipeList = () => {
                   day: 'numeric',
                 })}
               </p>
-              <p className="text-lg font-semibold text-black cursor-pointer" onClick={() => navigate(`/recipe/details/${item._id}`)}>{item.recipe_name_eng}</p>
+              <p
+                className="text-lg font-semibold text-black cursor-pointer"
+                onClick={() => navigate(`/recipe/details/${item._id}`)}
+              >
+                {item.recipe_name_eng}
+              </p>
               <div onClick={() => handleFavoriteClick(item._id)}>
                 {favorites.includes(item._id) ? (
                   <FaHeart className="text-red-500 cursor-pointer mt-1" />

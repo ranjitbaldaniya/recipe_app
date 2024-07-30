@@ -21,7 +21,7 @@ const ForgotPassword = () => {
       navigate('/');
     } catch (err:any) {
       setMessage('Error sending email');
-      notify(err, { type: 'error' })
+      notify(err.res.data.message, { type: 'error' })
     }
   };
 

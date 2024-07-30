@@ -6,6 +6,7 @@ import { useAuth } from '../../hooks/useAuth';
 import SwitcherTwo from '../../components/Switchers/SwitcherTwo';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { notify } from '../../common/Toast';
+import { useAddUserRecipeMutation, useGetEditUserRecipeMutation, useUpdateEditUserRecipeMutation } from '../api/Recipe.api';
 
 
 interface IFormInput {
@@ -41,6 +42,9 @@ const AddUserRecipe: React.FC = () => {
   const { state } = useLocation();
   const navigate = useNavigate()
   const recipe = state?.recipe;
+  const [getEditRecipe] = useGetEditUserRecipeMutation();
+  const [updateEditUserRecipe] = useUpdateEditUserRecipeMutation();
+  const [addUserRecipe] = useAddUserRecipeMutation()
   const [activeTab, setActiveTab] = useState<'eng' | 'hindi' | 'guj'>('eng');
   const [status, setStatus] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -109,9 +113,7 @@ const AddUserRecipe: React.FC = () => {
     if (recipe) {
       const recipeId = recipe._id;
       try {
-        const response = await axios.get(
-          `http://localhost:3001/recipe/${recipeId}`
-        );
+     const response =   await getEditRecipe(recipeId).unwrap()
         const fetchedRecipe = response.data;
         setFormValues({
           recipe_name_eng: fetchedRecipe.recipe_name_eng || '',
@@ -190,26 +192,20 @@ const AddUserRecipe: React.FC = () => {
     }
   
     const id = recipe?._id;
-    const url = id ? `http://localhost:3001/recipe/${id}` : 'http://localhost:3001/recipe';
-    const method = id ? 'put' : 'post';
   
     try {
-      const response = await axios[method](url, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
+      const response = id
+      ? await updateEditUserRecipe({ id, formData }).unwrap()
+      : await addUserRecipe(formData).unwrap();
       notify(id ? 'Recipe updated successfully' : 'Recipe added successfully', { type: 'success' });
-      
-      if (response.data) {
+
+      if (response) {
         navigate('/myrecipe');
       }
   
       console.log(id ? 'Recipe updated successfully:' : 'Recipe added successfully:', response.data);
-    } catch (error) {
-      notify('Something went wrong', { type: 'error' });
+    } catch (error:any) {
+      notify(error.response?.data.message, { type: 'error' });
       console.error(id ? 'Error updating recipe:' : 'Error adding recipe:', error);
     }
   };

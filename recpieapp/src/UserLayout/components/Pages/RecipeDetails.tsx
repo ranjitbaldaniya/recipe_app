@@ -4,15 +4,14 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import { RecipeDetailsResponse } from '../../../types/recepeTypes';
 import { useFetch } from '../../../hooks/useFetch';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Navbar from '../Navbar';
+import { useAddReviewMutation, useDeleteReviewMutation, useEditReviewMutation } from '../../api/review.api';
 
 const RecipeDetails: React.FC = () => {
   const param = useParams();
   const url = `http://localhost:3001/recipe/details/${param.id}`;
-  const { data, loading, error, refetch } =
-    useFetch<RecipeDetailsResponse>(url);
+  const { data, loading, error, refetch } = useFetch<RecipeDetailsResponse>(url);
   const [rating, setRating] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'eng' | 'hindi' | 'guj'>('eng');
   const [comment, setComment] = useState<string>('');
@@ -20,6 +19,9 @@ const RecipeDetails: React.FC = () => {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [reviewToEdit, setReviewToEdit] = useState<string | null>(null);
+  const [editReview] = useEditReviewMutation()
+  const [deleteReview] = useDeleteReviewMutation()
+  const [addReview] = useAddReviewMutation()
   const userString:any = localStorage.getItem('user');
   const user = JSON.parse(userString);
   const userId = user.id;
@@ -40,24 +42,20 @@ const RecipeDetails: React.FC = () => {
     }
     try {
       setSubmitting(true);
+      const reviewData = {
+        user_id: userId,
+        recipe_id: data?.recipe._id,
+        rating,
+        review: comment,
+        approved: false,
+      };
       if (editMode && reviewToEdit) {
-        await axios.put(`http://localhost:3001/review/${reviewToEdit}`, {
-          user_id: userId,
-          recipe_id: data?.recipe._id,
-          rating,
-          review: comment,
-        });
+        await editReview({ id: reviewToEdit, reviewData }).unwrap();
         console.log('Review updated successfully');
         setEditMode(false);
         setReviewToEdit(null);
       } else {
-        await axios.post('http://localhost:3001/review', {
-          user_id: userId,
-          recipe_id: data?.recipe._id,
-          rating,
-          review: comment,
-          approved: false,
-        });
+        await addReview(reviewData).unwrap();
         console.log('New review added successfully');
       }
       setRating(null);
@@ -82,7 +80,7 @@ const RecipeDetails: React.FC = () => {
 
   const handleDeleteReview = async (reviewId: string) => {
     try {
-      await axios.delete(`http://localhost:3001/review/${reviewId}`);
+      await deleteReview(reviewId)
       refetch();
     } catch (err) {
       console.error(err);

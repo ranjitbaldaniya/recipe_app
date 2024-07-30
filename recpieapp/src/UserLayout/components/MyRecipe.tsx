@@ -1,11 +1,11 @@
-import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
-import { faEdit, faStar, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom"
 import { notify } from '../../common/Toast';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useDeleteRecipeMutation, useGetUserRecipeListMutation } from '../api/Recipe.api';
+import { useAddFavoriteMutation, useDeleteFavoriteMutation, useGetFavoritesIdMutation, useGetFavoritesMutation } from '../api/favorite.api';
 
 interface Review {
     rating: number;
@@ -28,12 +28,18 @@ const MyRecipe = () => {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user') as any);
     const id = user.id;
+    const [deleteRecipe] = useDeleteRecipeMutation()
+    const [deleteFavorite] = useDeleteFavoriteMutation()
+    const [addFavorite] = useAddFavoriteMutation()
+    const [userRecipeList] = useGetUserRecipeListMutation()
+    const [favoriteId] = useGetFavoritesIdMutation()
+    const [favorite] = useGetFavoritesMutation()
 
     const getUserRecipesList = async () => {
         const user = JSON.parse(localStorage.getItem('user') as any);
         const id = user.id;
         try {
-            const response = await axios.get(`http://localhost:3001/recipe?userId=${id}`);
+            const response = await userRecipeList(id);
             setRecipes(response.data.recipes);
         } catch (error) {
             console.error("Error fetching recipes:", error);
@@ -45,18 +51,19 @@ const MyRecipe = () => {
     };
 
     const handleDelete = async (_id: string) => {   
-        try {
-             await axios.delete(`http://localhost:3001/recipe/${_id}`)
-            setRecipes((prevRecipes) => prevRecipes.filter((recipe) => recipe._id !== _id));
-            notify('Deleted successfully', { type: 'success' });
-        } catch (error) {
-        }
+      try {
+        await deleteRecipe(_id).unwrap();
+        notify('Deleted successfully', { type: 'success' });
+        setRecipes((prevRecipes) => prevRecipes.filter((recipe) => recipe._id !== _id));
+      } catch (error) {
+        notify("Error deleting recipe:", { type: 'error' });
+      }
     }
 
     const getFavorites = async () => {
         try {
           const userId = id;
-          const response = await axios.get(`http://localhost:3001/favorite/user/${userId}`);
+          const response = await favorite(userId);
           setFavorites(response.data.map((fav: { recipe_id: { _id: string } }) => fav.recipe_id._id));
         } catch (error) {
           console.error('Error fetching favorites:', error);
@@ -65,7 +72,7 @@ const MyRecipe = () => {
       const getFavoriteId = async (recipeId: string) => {
         try {
           const userId = id;
-          const response = await axios.get(`http://localhost:3001/favorite/user/${userId}`);
+          const response = await favoriteId(userId);
           const favorite = response.data.find((fav: { recipe_id: { _id: string } }) => fav.recipe_id._id === recipeId);
           return favorite?._id;
         } catch (error) {
@@ -75,14 +82,14 @@ const MyRecipe = () => {
       const handleFavoriteClick = async (recipeId: string) => {
         try {
           const userId = id;
-          if (favorites.includes(recipeId)) {
+          if (favorites?.includes(recipeId)) {
             const favoriteId = await getFavoriteId(recipeId);
             if (favoriteId) {
-              await axios.delete(`http://localhost:3001/favorite/${favoriteId}`);
+              await deleteFavorite(favoriteId);
               setFavorites(favorites.filter((fav) => fav !== recipeId));
             }
           } else {
-            await axios.post('http://localhost:3001/favorite', { user_id: userId, recipe_id: recipeId });
+            await addFavorite({ user_id: userId, recipe_id: recipeId }).unwrap();
             setFavorites([...favorites, recipeId]);
           }
         } catch (error) {
@@ -115,7 +122,7 @@ const MyRecipe = () => {
                         <div className="w-30 h-30 overflow-hidden">
                             <img
                                 src={`http://localhost:3001/${item.images}`}
-                                className="w-full h-auto object-cover cursor-pointer"
+                                className="w-full h-50 object-cover cursor-pointer"
                                 alt={item.recipe_name_eng}
                                 onClick={() => navigate(`/recipe/details/${item._id}`)}
 
@@ -132,17 +139,6 @@ const MyRecipe = () => {
                             <p className="text-lg font-semibold text-black cursor-pointer" onClick={() => navigate(`/recipe/details/${item._id}`)}>
                                 {item.recipe_name_eng}
                             </p>
-                            <div>
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                    <FontAwesomeIcon
-                                        key={star}
-                                        icon={star <= (item.userRating || item.reviews[0]?.rating || 0) ? faStar : faStarEmpty}
-                                        className="text-yellow-500"
-
-                                    />
-                                ))}
-                            </div>
-                            <p className="text-lg font-normal">{item.reviews[0]?.review}</p>
                         </div>
                         <div className='flex gap-5'><p>
 
