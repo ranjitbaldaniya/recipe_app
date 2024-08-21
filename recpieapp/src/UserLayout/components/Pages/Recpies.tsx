@@ -7,11 +7,14 @@ import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 import { RecipeDetailsResponse } from '../../../types/recepeTypes';
 import { useFetch } from '../../../hooks/useFetch';
 import axios from 'axios';
-import { useAuth } from '../../../hooks/useAuth';
+// import { useAuth } from '../../../hooks/useAuth';
+import { useParams } from 'react-router-dom';
 
 const Recpies = () => {
-  const url = 'http://localhost:3001/recipe/details/6687d81dbb394d8b32228e68';
-  const { user } = useAuth();
+  const param = useParams();
+
+  const url = `http://localhost:3001/recipe/details/${param.id}`;
+  // const { user } = useAuth();
   const { data, loading, error, refetch } = useFetch<RecipeDetailsResponse>(url);
   const [rating, setRating] = useState<number | null>(null);
   const [comment, setComment] = useState<string>('');

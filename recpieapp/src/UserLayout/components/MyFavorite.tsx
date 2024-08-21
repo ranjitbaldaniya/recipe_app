@@ -112,7 +112,7 @@ const MyFavorite = () => {
                       src={`http://localhost:3001/${
                         item.recipe_id.images ?? ''
                       }`}
-                      className="w-full h-auto object-cover cursor-pointer"
+                      className="w-full h-50 object-cover cursor-pointer"
                       onClick={() =>
                         navigate(`/recipe/details/${item.recipe_id._id}`)
                       }

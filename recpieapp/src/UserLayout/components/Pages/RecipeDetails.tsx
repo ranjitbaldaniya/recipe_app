@@ -7,6 +7,7 @@ import { useFetch } from '../../../hooks/useFetch';
 import { useParams } from 'react-router-dom';
 import Navbar from '../Navbar';
 import { useAddReviewMutation, useDeleteReviewMutation, useEditReviewMutation } from '../../api/review.api';
+import { notify } from '../../../common/Toast';
 
 const RecipeDetails: React.FC = () => {
   const param = useParams();
@@ -37,7 +38,7 @@ const RecipeDetails: React.FC = () => {
   };
   const handleSubmitReview = async () => {
     if (!rating || !comment) {
-      alert('Please provide both a rating and a comment.');
+      notify("Please provide both a rating and a comment.", { type: 'error' });
       return;
     }
     try {

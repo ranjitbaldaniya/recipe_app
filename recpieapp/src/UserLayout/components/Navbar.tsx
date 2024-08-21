@@ -182,20 +182,15 @@ const Navbar: React.FC = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleClick = async () => {
-    try {
-      const response = await axios.get('http://localhost:3001/recipe');
-      console.log('Recipes:', response.data.recipes);
-    } catch (error) {
-      console.error('Error fetching recipes:', error);
-    }
-  };
+
   return (
     <>
       <nav>
         <div className="container mx-auto px-4 py-2 flex justify-between items-center">
           <div>
+            <NavLink to='/'>
             <img src={logo} alt="Logo" />
+            </NavLink>
           </div>
           <div className="md:hidden">
             <button
@@ -214,7 +209,6 @@ const Navbar: React.FC = () => {
               <NavLink
                 to="/"
                 className="hover:text-green-500 text-sm font-semibold text-[#474747]"
-                onClick={handleClick}
                 style={({ isActive }) => ({
                   color: isActive ? 'green' : '',
                 })}
@@ -276,7 +270,7 @@ const Navbar: React.FC = () => {
                   <ul className="absolute right-0 w-48 bg-white text-gray-900 shadow-lg z-1">
                     <div ref={modalRef} className="relative">
                       <div className="px-4 py-3">
-                        <span className="block hover:bg-gray-200 text-green-500 font-bold">
+                        <span className="block hover:bg-gray-200 text-black font-bold">
                           {userName}
                         </span>
                       </div>
@@ -284,6 +278,9 @@ const Navbar: React.FC = () => {
                         <NavLink
                           to="/myrecipe"
                           onClick={() => setProfileOpen(false)}
+                          style={({ isActive }) => ({
+                            color: isActive ? 'green' : '',
+                          })}
                           className="block hover:bg-gray-200 px-4 py-2"
                         >
                           My Recipe
@@ -292,6 +289,9 @@ const Navbar: React.FC = () => {
                       <li>
                         <NavLink
                           to="/favorites"
+                          style={({ isActive }) => ({
+                            color: isActive ? 'green' : '',
+                          })}
                           onClick={() => setProfileOpen(false)}
                           className="block hover:bg-gray-200 px-4 py-2"
                         >

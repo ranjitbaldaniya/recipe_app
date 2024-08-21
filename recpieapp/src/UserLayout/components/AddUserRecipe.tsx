@@ -6,8 +6,13 @@ import { useAuth } from '../../hooks/useAuth';
 import SwitcherTwo from '../../components/Switchers/SwitcherTwo';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { notify } from '../../common/Toast';
-import { useAddUserRecipeMutation, useGetEditUserRecipeMutation, useUpdateEditUserRecipeMutation } from '../api/Recipe.api';
-
+import {
+  useAddUserRecipeMutation,
+  useGetEditUserRecipeMutation,
+  useUpdateEditUserRecipeMutation,
+} from '../api/Recipe.api';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 
 interface IFormInput {
   recipe_name_eng: string;
@@ -36,15 +41,17 @@ interface Category {
   status: boolean;
   subcategories: Category[];
 }
-
+const validationSchema = Yup.object({
+  ingredients_eng: Yup.string().required('Ingredients are required'),
+});
 const AddUserRecipe: React.FC = () => {
   const { token, user } = useAuth();
   const { state } = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const recipe = state?.recipe;
   const [getEditRecipe] = useGetEditUserRecipeMutation();
   const [updateEditUserRecipe] = useUpdateEditUserRecipeMutation();
-  const [addUserRecipe] = useAddUserRecipeMutation()
+  const [addUserRecipe] = useAddUserRecipeMutation();
   const [activeTab, setActiveTab] = useState<'eng' | 'hindi' | 'guj'>('eng');
   const [status, setStatus] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -67,6 +74,32 @@ const AddUserRecipe: React.FC = () => {
     video_url: '',
     status: true,
     approved: true,
+  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormInput>({
+    defaultValues: {
+      recipe_name_eng: '',
+      ingredients_eng: '',
+      recipe_steps_eng: '',
+      recipe_name_hindi: '',
+      ingredients_hindi: '',
+      recipe_steps_hindi: '',
+      recipe_name_guj: '',
+      ingredients_guj: '',
+      recipe_steps_guj: '',
+      category: '',
+      num_of_people_to_served: 0,
+      cooking_time: '',
+      preparation_time: '',
+      difficulty_level: '',
+      images: null,
+      video_url: '',
+      status: true,
+      approved: true,
+    },
   });
 
   useEffect(() => {
@@ -113,7 +146,7 @@ const AddUserRecipe: React.FC = () => {
     if (recipe) {
       const recipeId = recipe._id;
       try {
-     const response =   await getEditRecipe(recipeId).unwrap()
+        const response = await getEditRecipe(recipeId).unwrap();
         const fetchedRecipe = response.data;
         setFormValues({
           recipe_name_eng: fetchedRecipe.recipe_name_eng || '',
@@ -140,11 +173,11 @@ const AddUserRecipe: React.FC = () => {
       }
     }
   };
-  
+
   useEffect(() => {
     getEditUserRecipes();
   }, []);
- 
+
   const handleInputChange = (
     key: keyof IFormInput,
     value: string | number | boolean | File | null,
@@ -166,12 +199,64 @@ const AddUserRecipe: React.FC = () => {
       </React.Fragment>
     ));
   };
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   const formData = new FormData();
+  //   formData.append('recipe_name_eng', formValues.recipe_name_eng);
+  //   formData.append('ingredients_eng', formValues.ingredients_eng);
+  //   formData.append('recipe_steps_eng', formValues.recipe_steps_eng);
+  //   formData.append('recipe_name_hindi', formValues.recipe_name_hindi!);
+  //   formData.append('ingredients_hindi', formValues.ingredients_hindi!);
+  //   formData.append('recipe_steps_hindi', formValues.recipe_steps_hindi!);
+  //   formData.append('recipe_name_guj', formValues.recipe_name_guj!);
+  //   formData.append('ingredients_guj', formValues.ingredients_guj!);
+  //   formData.append('recipe_steps_guj', formValues.recipe_steps_guj!);
+  //   formData.append('category', formValues.category);
+  //   formData.append('num_of_people_to_served', formValues.num_of_people_to_served.toString());
+  //   formData.append('cooking_time', formValues.cooking_time);
+  //   formData.append('preparation_time', formValues.preparation_time);
+  //   formData.append('difficulty_level', formValues.difficulty_level);
+  //   formData.append('status', status.toString());
+  //   formData.append('create_by', user!.id);
+  //   formData.append('approved', String(formValues.approved));
+
+  //   if (formValues.images) {
+  //     formData.append('images', formValues.images);
+  //   }
+
+  //   const id = recipe?._id;
+
+  //   try {
+  //     const response = id
+  //     ? await updateEditUserRecipe({ id, formData }).unwrap()
+  //     : await addUserRecipe(formData).unwrap();
+  //     notify(id ? 'Recipe updated successfully' : 'Recipe added successfully', { type: 'success' });
+
+  //     if (response) {
+  //       navigate('/myrecipe');
+  //     }
+
+  //     console.log(id ? 'Recipe updated successfully:' : 'Recipe added successfully:', response.data);
+  //   } catch (error:any) {
+  //     notify(error.data.message, { type: 'error' });
+  //     console.error(id ? 'Error updating recipe:' : 'Error adding recipe:', error);
+  //     // notify(id ? 'Error updating recipe' : 'Error adding recipe', { type: 'error' });
+  //   }
+  // };
+  const onSubmit = async () => {
+    //   if (!formValues.ingredients_eng.trim()) {
+    // notify('Ingredients in English are required', { type: 'error' });
+    // return;
+    //   }
+      // if (!formValues.recipe_steps_eng.trim()) {
+      //   notify('Recipe steps in English are required', { type: 'error' });
+      //   return;
+      // }
+    // event.preventDefault();
     const formData = new FormData();
-    formData.append('recipe_name_eng', formValues.recipe_name_eng);
-    formData.append('ingredients_eng', formValues.ingredients_eng);
-    formData.append('recipe_steps_eng', formValues.recipe_steps_eng);
+    formData.append('recipe_name_eng', formValues.recipe_name_eng!);
+    formData.append('ingredients_eng', formValues.ingredients_eng!);
+    formData.append('recipe_steps_eng', formValues.recipe_steps_eng!);
     formData.append('recipe_name_hindi', formValues.recipe_name_hindi!);
     formData.append('ingredients_hindi', formValues.ingredients_hindi!);
     formData.append('recipe_steps_hindi', formValues.recipe_steps_hindi!);
@@ -179,48 +264,64 @@ const AddUserRecipe: React.FC = () => {
     formData.append('ingredients_guj', formValues.ingredients_guj!);
     formData.append('recipe_steps_guj', formValues.recipe_steps_guj!);
     formData.append('category', formValues.category);
-    formData.append('num_of_people_to_served', formValues.num_of_people_to_served.toString());
+    formData.append(
+      'num_of_people_to_served',
+      formValues.num_of_people_to_served.toString(),
+    );
     formData.append('cooking_time', formValues.cooking_time);
     formData.append('preparation_time', formValues.preparation_time);
     formData.append('difficulty_level', formValues.difficulty_level);
     formData.append('status', status.toString());
     formData.append('create_by', user!.id);
     formData.append('approved', String(formValues.approved));
-  
+
     if (formValues.images) {
       formData.append('images', formValues.images);
     }
-  
+
     const id = recipe?._id;
-  
+
     try {
       const response = id
-      ? await updateEditUserRecipe({ id, formData }).unwrap()
-      : await addUserRecipe(formData).unwrap();
-      notify(id ? 'Recipe updated successfully' : 'Recipe added successfully', { type: 'success' });
+        ? await updateEditUserRecipe({ id, formData }).unwrap()
+        : await addUserRecipe(formData).unwrap();
+      notify(id ? 'Recipe updated successfully' : 'Recipe added successfully', {
+        type: 'success',
+      });
 
       if (response) {
         navigate('/myrecipe');
       }
-  
-      console.log(id ? 'Recipe updated successfully:' : 'Recipe added successfully:', response.data);
-    } catch (error:any) {
-      notify(error.response?.data.message, { type: 'error' });
-      console.error(id ? 'Error updating recipe:' : 'Error adding recipe:', error);
+
+      console.log(
+        id ? 'Recipe updated successfully:' : 'Recipe added successfully:',
+        response.data,
+      );
+    } catch (error: any) {
+      notify(error.data.message, { type: 'error' });
+      console.error(
+        id ? 'Error updating recipe:' : 'Error adding recipe:',
+        error,
+      );
+      // notify(id ? 'Error updating recipe' : 'Error adding recipe', { type: 'error' });
     }
   };
-  
+
   return (
     <div className="bg-white">
       <h2 className="text-2xl font-semibold  mb-4 text-center">
-      {recipe ? 'Update Recipe' : 'Add New Recipe'}  
+        {recipe ? 'Update Recipe' : 'Add New Recipe'}
       </h2>
-      <form className="space-y-4 lg:ps-20 lg:pe-20" onSubmit={handleSubmit}>
+      <form
+        className="space-y-4 lg:ps-20 lg:pe-20"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div>
           <label className="block  font-bold">Category</label>
           <select
-            value={formValues.category}
-            onChange={(e) => handleInputChange('category', e.target.value)}
+           {...register('category', {required: 'Please select category',})}
+           value={formValues.category}
+            onChange={(e) => handleInputChange('category', e.target.value || '')}
             className="w-full border rounded p-2"
           >
             <option className="" value="">
@@ -228,7 +329,9 @@ const AddUserRecipe: React.FC = () => {
             </option>
             {renderCategoryOptions(categories)}
           </select>
-        </div>
+          {!formValues.category && <p className='text-red-500'>Please select category</p>}
+          {errors.category && <p className='text-red-500'>Select Category</p>}
+          </div>
 
         <div className="mb-4">
           <div className="flex justify-center space-x-4 mb-4 ">
@@ -275,47 +378,48 @@ const AddUserRecipe: React.FC = () => {
                 <input
                   type="text"
                   className="w-full border border-[#ccc] rounded p-2"
+                  {...register('recipe_name_eng', {required: 'Please enter recipe name',})}
                   placeholder="Add recipe name in english"
                   value={formValues.recipe_name_eng}
                   onChange={(e) =>
                     handleInputChange('recipe_name_eng', e.target.value)
                   }
                 />
-              </div>
+                {!formValues.recipe_name_eng && <p className='text-red-500'>Please enter recipe name</p>}
+                </div>
               <div className="mt-2">
-                <label className="block font-bold ">
-                  Ingredients
-                </label>
+                <label className="block font-bold ">Ingredients</label>
                 <ReactQuill
                   value={formValues.ingredients_eng}
                   onChange={(value) =>
                     handleInputChange('ingredients_eng', value)
                   }
-                  className=' rounded data'
-                />
+                  className=" rounded data"
+                />              
+                {!formValues.ingredients_eng.trim()  && <p className='text-red-500'>Please enter ingredients</p>}
               </div>
               <div className="mt-2">
-                <label className="block font-bold">
-                  Recipe Steps
-                </label>
+                <label className="block font-bold">Recipe Steps</label>
                 <ReactQuill
                   value={formValues.recipe_steps_eng}
                   onChange={(value) =>
                     handleInputChange('recipe_steps_eng', value)
                   }
-                  className='rounded data'
+                  className="rounded data"
                 />
+                {!formValues.recipe_steps_eng && <p className='text-red-500'>Please enter recipe steps</p>}
               </div>
             </div>
           )}
           {activeTab === 'hindi' && (
             <div className="">
               <div>
-                <label className="block  font-bold">
-                  Recipe Name in Hindi
-                </label>
+                <label className="block  font-bold">Recipe Name in Hindi</label>
                 <input
                   type="text"
+                  {...register('recipe_name_hindi', {
+                    required: 'This is required.',
+                  })}
                   className="w-full border border-[#ccc] rounded p-2"
                   placeholder="Add recipe name in hindi"
                   value={formValues.recipe_name_hindi}
@@ -325,9 +429,7 @@ const AddUserRecipe: React.FC = () => {
                 />
               </div>
               <div className="mt-2">
-                <label className="block  font-bold">
-                  Ingredients
-                </label>
+                <label className="block  font-bold">Ingredients</label>
                 <ReactQuill
                   value={formValues.ingredients_hindi}
                   onChange={(value) =>
@@ -336,9 +438,7 @@ const AddUserRecipe: React.FC = () => {
                 />
               </div>
               <div className="mt-2">
-                <label className="block  font-bold">
-                  Recipe Steps
-                </label>
+                <label className="block  font-bold">Recipe Steps</label>
                 <ReactQuill
                   value={formValues.recipe_steps_hindi}
                   onChange={(value) =>
@@ -356,6 +456,9 @@ const AddUserRecipe: React.FC = () => {
                 </label>
                 <input
                   type="text"
+                  {...register('recipe_name_guj', {
+                    required: 'This is required.',
+                  })}
                   className="w-full border border-[#ccc] rounded p-2"
                   placeholder="Add recipe name in gujrati"
                   value={formValues.recipe_name_guj}
@@ -363,11 +466,10 @@ const AddUserRecipe: React.FC = () => {
                     handleInputChange('recipe_name_guj', e.target.value)
                   }
                 />
+                {errors.recipe_name_guj &&  <p className='text-red-500'>Please enter recipe name</p>}
               </div>
               <div className="mt-2">
-                <label className="block  font-bold">
-                  Ingredients
-                </label>
+                <label className="block  font-bold">Ingredients</label>
                 <ReactQuill
                   value={formValues.ingredients_guj}
                   onChange={(value) =>
@@ -376,9 +478,7 @@ const AddUserRecipe: React.FC = () => {
                 />
               </div>
               <div className="mt-2">
-                <label className="block  font-bold">
-                  Recipe Steps
-                </label>
+                <label className="block  font-bold">Recipe Steps</label>
                 <ReactQuill
                   value={formValues.recipe_steps_guj}
                   onChange={(value) =>
@@ -408,9 +508,7 @@ const AddUserRecipe: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block  font-bold">
-              Cooking Time
-            </label>
+            <label className="block  font-bold">Cooking Time</label>
             <input
               type="text"
               className="w-full border border-[#ccc]  rounded p-2"
@@ -422,9 +520,7 @@ const AddUserRecipe: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block  font-bold">
-              Preparation Time
-            </label>
+            <label className="block  font-bold">Preparation Time</label>
             <input
               type="text"
               className="w-full border border-[#ccc]  rounded p-2"
@@ -436,9 +532,7 @@ const AddUserRecipe: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block  font-bold">
-              Difficulty Level
-            </label>
+            <label className="block  font-bold">Difficulty Level</label>
             <input
               type="text"
               className="w-full border border-[#ccc]  rounded p-2"
@@ -453,6 +547,7 @@ const AddUserRecipe: React.FC = () => {
             <label className="block  font-bold">Image</label>
             <input
               type="file"
+              {...register('images', { required: true,})}
               accept="image/*"
               className="w-full border border-[#ccc]  rounded p-2"
               onChange={(e) =>
@@ -462,7 +557,8 @@ const AddUserRecipe: React.FC = () => {
                 )
               }
             />
-          </div>
+                {!formValues.images && <p className='text-red-500'>Please choose image</p>}
+                </div>
           <div>
             <label className="block  font-bold">Video URL</label>
             <input
@@ -485,7 +581,7 @@ const AddUserRecipe: React.FC = () => {
             type="submit"
             className="bg-green-900 text-white py-2 px-4 rounded hover:bg-green-600 font-bold"
           >
-                  {recipe ? 'Update Recipe' : 'Add Recipe'}  
+            {recipe ? 'Update Recipe' : 'Add Recipe'}
           </button>
         </div>
       </form>

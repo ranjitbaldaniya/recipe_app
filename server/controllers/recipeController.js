@@ -35,7 +35,7 @@ export const createRecipe = async (req, res) => {
     ) {
       return res
         .status(400)
-        .json({ message: "All required fields must be provided" });
+        .json({ message: "English fields must be provided" });
     }
 
     const newRecipe = new Recipe({

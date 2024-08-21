@@ -5,7 +5,7 @@ const Subscribe = () => {
   return (
     <>
       <div className='mx-10'>
-        <div className="flex gap-10">
+        <div className="lg:flex gap-10">
           <div className=" border-8 border-green-500 p-10">
             <span className="text-5xl italic mb-8 text-[#40ba37] flex justify-center">"</span>
             <p className="text-2xl italic mb-10 font-semibold">
@@ -27,15 +27,15 @@ const Subscribe = () => {
               <div className='p-5'> 
               <p>
 
-              <input type="text" placeholder='Subscribe to newsletter' className='w-94 h-15 text-base px-5 font-semibold capitalize mt-10 ' />
+              <input type="text" placeholder='Subscribe to newsletter' className='lg:w-94 w-50 h-15 text-base px-5 font-semibold capitalize mt-10 ' />
               </p>
-              <button className='w-94 h-15 text-white text-base px-5 font-semibold capitalize mt-8 bg-[#40ba37]'>submit</button>
+              <button className='lg:w-94 w-50 h-15 text-white text-base px-5 font-semibold capitalize mt-8 bg-[#40ba37]'>submit</button>
               <p className='mt-10 italic text-white text-xs'>Fusce nec ante vitae lacus aliquet vulputate. Donec sceleri sque accumsan molestie. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia.</p>
               </div>
             </div>
           </div>
 
-            <img src={subscribLogo}/>
+            <img src={subscribLogo} className='mt-5 lg:mt-0'/>
 
         </div>
 

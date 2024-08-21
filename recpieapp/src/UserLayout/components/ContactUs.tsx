@@ -62,10 +62,10 @@ const ContactUs = () => {
                       <input
                         type="text"
                         placeholder="Subscribe to newsletter"
-                        className="w-[292px] h-15 text-base px-5 font-semibold capitalize mt-10 "
+                        className=" h-15 text-base px-5 font-semibold capitalize mt-10 "
                       />
                     </p>
-                    <button className="w-73 h-15 text-white text-base px-5 font-semibold capitalize mt-8 bg-[#40ba37]">
+                    <button className="lg:w-73 h-15 text-white text-base px-5 font-semibold capitalize mt-8 bg-[#40ba37]">
                       submit
                     </button>
                     <p className="mt-10 italic text-white text-xs">
