@@ -17,7 +17,7 @@ const AdminReviews = () => {
   
   useEffect(() => {
     const fetchReviews = async () => {
-      const response = await axios.get('http://localhost:3001/admin/pending');
+      const response = await axios.get('http://localhost:3001/admin/review-pending');
       setReviews(response.data);
     };
 

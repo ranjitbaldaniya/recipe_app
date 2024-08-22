@@ -2,6 +2,7 @@ import { Recipe } from "../models/recipeModel.js";
 import { Review } from "../models/reviewModel.js";
 import { Category } from "../models/categoryModel.js";
 import mongoose from 'mongoose'
+
 export const createRecipe = async (req, res) => {
   try {
     const {
@@ -22,7 +23,6 @@ export const createRecipe = async (req, res) => {
       video_url,
       status,
       create_by,
-      approved
     } = req.body;
     const images = req.file ? req.file.path : "";
 
@@ -55,12 +55,13 @@ export const createRecipe = async (req, res) => {
       difficulty_level,
       images,
       video_url,
-      status,
+      status: 'pending',
       create_by,
-      approved
     });
 
     const savedRecipe = await newRecipe.save();
+
+    notifyAdminAboutNewRecipe(savedRecipe);
 
     res.status(201).json(savedRecipe);
   } catch (error) {
@@ -70,17 +71,20 @@ export const createRecipe = async (req, res) => {
       .json({ message: "Failed to create recipe", error: error.message });
   }
 };
+
+const notifyAdminAboutNewRecipe = (recipe) => {
+  console.log("Admin notification: A new recipe has been submitted and is awaiting review:", recipe);
+};
+
 export const getRecipes = async (req, res) => {
   try {
-    const { pageIndex, pageSize, category, userId } = req.query;
-    let filter = {};
+    const { pageIndex = 1, pageSize = 10, category, userId } = req.query;
+    let filter = { approved:true };
 
     if (category) {
       const categoryIds = [new mongoose.Types.ObjectId(category)];
       const subcategoryIds = await getSubcategoryIds(new mongoose.Types.ObjectId(category));
       subcategoryIds.forEach(id => categoryIds.push(new mongoose.Types.ObjectId(id)));
-
-      console.log('Category IDs:', categoryIds);
 
       filter.category = { $in: categoryIds };
     }
@@ -89,15 +93,26 @@ export const getRecipes = async (req, res) => {
       filter.create_by = new mongoose.Types.ObjectId(userId);
     }
 
-    const pageIndexInt = parseInt(pageIndex) || 1;
-    const pageSizeInt = parseInt(pageSize) || 0;
+    const pageIndexInt = parseInt(pageIndex, 10);
+    const pageSizeInt = parseInt(pageSize, 10);
 
+    // Handle pagination
     const startIndex = (pageIndexInt - 1) * pageSizeInt;
     const totalRecipes = await Recipe.countDocuments(filter);
 
+    if (totalRecipes === 0) {
+      return res.json({
+        recipes: [],
+        pagination: {},
+        totalRecipes: 0,
+        totalPages: 0,
+        currentPage: pageIndexInt,
+      });
+    }
+
     const recipes = await Recipe.find(filter)
       .skip(pageSizeInt ? startIndex : 0)
-      .limit(pageSizeInt);
+      .limit(pageSizeInt || 0);
 
     const pagination = {};
     if (pageSizeInt && startIndex + pageSizeInt < totalRecipes) {
@@ -126,12 +141,10 @@ export const getRecipes = async (req, res) => {
       reviewMap[review.recipe_id].push(review);
     });
 
-    const recipesWithReviews = recipes.map(recipe => {
-      return {
-        ...recipe.toObject(),
-        reviews: reviewMap[recipe._id] || []
-      };
-    });
+    const recipesWithReviews = recipes.map(recipe => ({
+      ...recipe.toObject(),
+      reviews: reviewMap[recipe._id] || [],
+    }));
 
     res.json({
       recipes: recipesWithReviews,
@@ -141,9 +154,11 @@ export const getRecipes = async (req, res) => {
       currentPage: pageSizeInt ? pageIndexInt : 1,
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Error fetching recipes:", err);  // Log the error for debugging
+    res.status(500).json({ message: "Failed to fetch recipes", error: err.message });
   }
 };
+
 
 // Updated to ensure subcategories are correctly fetched
 async function getSubcategoryIds(categoryId) {
@@ -284,5 +299,51 @@ export const getRecipeDetails = async (req, res) => {
       res.json({ recipe, reviews });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+
+// export const approveRecipe = async (req, res) => {
+//   try {
+//     const { recipeId } = req.params;
+// console.log(req.params)
+//     // Find the recipe by ID and update its approval status
+//     const updatedRecipe = await Recipe.findByIdAndUpdate(
+//       recipeId,
+//       { new: true }
+//     );
+
+//     if (!updatedRecipe) {
+//       return res.status(404).json({ message: "Recipe not found" });
+//     }
+
+//     res.status(200).json(updatedRecipe);
+//   } catch (error) {
+//     console.error("Error approving recipe:", error);
+//     res
+//       .status(500)
+//       .json({ message: "Failed to approve recipe", error: error.message });
+//   }
+// };
+
+export const approveRecipe = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const approvedReview = await Recipe.findByIdAndUpdate(id, { approved: true }, { new: true });
+    res.status(200).json(approvedReview);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+
+
+// / Get pending reviews
+export const getPendingRecipe = async (req, res) => {
+  try {
+    const pendingReviews = await Recipe.find({ approved: false }).populate(req.params.id );
+    res.status(200).json(pendingReviews);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 };

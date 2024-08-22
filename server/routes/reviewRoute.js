@@ -7,6 +7,7 @@ import {
   updateReview,
 } from "../controllers/reviewController.js";
 import { approveReview, rejectReview, getPendingReviews } from "../controllers/reviewController.js";
+import { approveRecipe, getPendingRecipe } from "../controllers/recipeController.js";
 
 const reviewRoute = express.Router();
 const adminRoute = express.Router();
@@ -24,7 +25,9 @@ reviewRoute.put("/:id", updateReview);
 reviewRoute.delete("/:id", deleteReview);
 adminRoute.put("/approve/:id", approveReview);
 adminRoute.delete("/reject/:id", rejectReview);
-adminRoute.get("/pending", getPendingReviews);
+adminRoute.get("/review-pending", getPendingReviews);
+adminRoute.get("/recipe-pending", getPendingRecipe);
+adminRoute.put("/approveRecipe/:id", approveRecipe)
 
 
 export default reviewRoute;

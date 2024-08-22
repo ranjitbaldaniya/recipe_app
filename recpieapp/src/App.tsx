@@ -31,6 +31,7 @@ import NotFound from './UserLayout/components/NotFound';
 import AdminReviews from './components/Admin/Review/AdminReview';
 import ForgotPassword from './UserLayout/components/Pages/Forgotpassword';
 import ResetPassword from './UserLayout/components/Pages/ResetPassword';
+import AdminRecipeManagement from './components/Admin/recipe/ReviewRecipe';
 // import ForgotPassword from './UserLayout/components/Pages/ForgotPassword';
 
 // Private Route Component for Users
@@ -78,10 +79,10 @@ function App() {
           {/* Public Routes */}
           <Route path="/" index element={
             <>
-            <PageTitle title="Home page" />
-            <Homepage />
+              <PageTitle title="Home page" />
+              <Homepage />
             </>
-            } />
+          } />
           <Route
             path="/admin/login"
             element={
@@ -118,7 +119,7 @@ function App() {
               </>
             }
           />
-         <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           <Route
             path="/contact"
@@ -133,12 +134,12 @@ function App() {
             path="/aboutus"
             element={
               <>
-               <PageTitle title="About" />
+                <PageTitle title="About" />
                 <Aboutus />
               </>
             }
           />
-       
+
           <Route
             path="/user-recpie"
             element={
@@ -158,7 +159,7 @@ function App() {
               </>
             }
           />
-          <Route path="/notfound"  element={<NotFound />} />
+          <Route path="/notfound" element={<NotFound />} />
         </Routes>
       </UserLayout>
     );
@@ -169,17 +170,17 @@ function App() {
       <UserLayout>
         {/* User Private Routes */}
         <Routes>
-        <Route path="/" index element={
-           <>
-           <PageTitle title="Home page" />
-           <Homepage />
-           </>
-           } />
-        <Route
+          <Route path="/" index element={
+            <>
+              <PageTitle title="Home page" />
+              <Homepage />
+            </>
+          } />
+          <Route
             path="/contact"
             element={
               <>
-               <PageTitle title="Contact" />
+                <PageTitle title="Contact" />
                 <Contact />
               </>
             }
@@ -188,7 +189,7 @@ function App() {
             path="/aboutus"
             element={
               <>
-               <PageTitle title="About" />
+                <PageTitle title="About" />
                 <Aboutus />
               </>
             }
@@ -202,39 +203,39 @@ function App() {
               </UserPrivateRoute>
             }
           />
-        <Route
-          path="/myrecipe"
-          element={
-            <>
-              <PageTitle title="My Recipe" />
-              <Navbar />
-              <MyRecipe />
-              <Footer />
+          <Route
+            path="/myrecipe"
+            element={
+              <>
+                <PageTitle title="My Recipe" />
+                <Navbar />
+                <MyRecipe />
+                <Footer />
               </>
-          }
-        />
-         <Route
-          path="/favorites"
-          element={
-            <>
-              <PageTitle title="Favorites" />
-              <Navbar />
-              <MyFavorite />
-              <Footer />
+            }
+          />
+          <Route
+            path="/favorites"
+            element={
+              <>
+                <PageTitle title="Favorites" />
+                <Navbar />
+                <MyFavorite />
+                <Footer />
               </>
-          }
-        />
-             <Route
-          path="/add-recipe"
-          element={
-            <>
-              <PageTitle title="Add Recipe" />
-              <Navbar />
-              <AddUserRecipe />
-              <Footer />
+            }
+          />
+          <Route
+            path="/add-recipe"
+            element={
+              <>
+                <PageTitle title="Add Recipe" />
+                <Navbar />
+                <AddUserRecipe />
+                <Footer />
               </>
-          }
-        />
+            }
+          />
 
           <Route
             path="/recipe/details/:id"
@@ -245,7 +246,7 @@ function App() {
               </>
             }
           />
-        <Route path="/notfound"  element={<NotFound />} />
+          <Route path="/notfound" element={<NotFound />} />
         </Routes>
       </UserLayout>
     );
@@ -335,6 +336,16 @@ function App() {
             <AdminPrivateRoute>
               <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <AdminReviews />
+            </AdminPrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admin/recipe/review"
+          element={
+            <AdminPrivateRoute>
+              <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <AdminRecipeManagement />
             </AdminPrivateRoute>
           }
         />

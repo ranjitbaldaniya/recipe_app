@@ -103,6 +103,9 @@ const Navbar: React.FC = () => {
         notify(response.data.message, { type: 'success' });
         localStorage.setItem('user_name', response.data.user.user_name);
         setUserName(response.data.user.user_name);
+        setTimeout(()=>{
+          window.location.reload()
+        },2000)
         setShowLogin(false);
       }
     } catch (error:any) {
@@ -124,7 +127,7 @@ const Navbar: React.FC = () => {
     setShowLogin(true);
     localStorage.removeItem('user_name');
     setProfileOpen(false);
-    navigate('/')
+    window.location.reload()
   };
 
   const handleSignUpSubmit = async () => {
