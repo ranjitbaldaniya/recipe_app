@@ -86,22 +86,22 @@ const ListCategory: React.FC = () => {
                 <FontAwesomeIcon
                   icon={isExpanded ? faChevronUp : faChevronDown}
                   onClick={() => toggleExpand(category?._id)}
-                  className="cursor-pointer mr-2 text-gray-600 text-blue-900 ms-1"
+                  className="cursor-pointer mr-2 text-gray-600  ms-1"
                 />
               )}
-              <div className="border-b border-gray-300 text-blue-900 font-bold">
+              <div className="border-b border-gray-300 font-bold">
                 {category?.name} - Status: {category?.status ? 'Active' : 'Inactive'}
               </div>
             </div>
             <div>
               <button
-                className="mr-2 px-2 py-1 bg-blue-500 text-white rounded"
+                className="mr-2 px-2 py-1 bg-black text-white rounded"
                 onClick={() => handleEdit(category?._id)}
               >
                 <FontAwesomeIcon icon={faEdit} />
               </button>
               <button
-                className="px-2 py-1 bg-yellow-500 text-white rounded"
+                className="px-2 py-1 bg-black text-white rounded"
                 onClick={() => handleDelete(category?._id)}
               >
                 <FontAwesomeIcon icon={faTrashAlt} />
@@ -124,9 +124,9 @@ const ListCategory: React.FC = () => {
   return (
     <div>
       <div className="mb-4 flex justify-between items-center">
-        <h2 className="text-2xl text-blue-900 font-semibold">List Categories</h2>
+        <h2 className="text-2xl  font-semibold">List Categories</h2>
         <Link to="/admin/add-category">
-          <button className="px-4 py-2 bg-blue-500 text-white font-bold rounded-md shadow-md">
+          <button className="px-4 py-2  border-2 font-bold rounded-md shadow-md">
             Add Category
           </button>
         </Link>

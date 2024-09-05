@@ -37,20 +37,31 @@ const RecipeList = () => {
   const user = JSON.parse(localStorage.getItem('user') as any);
   const id = user?.id || '';
   const { categoryId } = useCategory();
-  const { data, error } = useGetAllRecipeQuery();
+  const [pageIndex, setPageIndex] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const { data, error } = useGetAllRecipeQuery({ pageIndex, pageSize: 10 });
   const [deleteFavorite] = useDeleteFavoriteMutation();
   const [addFavorite] = useAddFavoriteMutation();
   const [favorite] = useGetFavoritesMutation();
   const [favoriteId] = useGetFavoritesIdMutation();
   const [recipeByCategory] = useGetRecipeByCategoryMutation();
 
+  useEffect(() => {
+    if (data) {
+      setRecipes(data.recipes);
+      setTotalPages(data.totalPages);
+    }
+    if (error) {
+      console.error('Error fetching recipes:', error);
+    }
+  }, [data, error]);
   const getFavorites = async () => {
     try {
       const userId = id;
       const response = await favorite(userId);
       setFavorites(
         response.data.map(
-          (fav: { recipe_id: { _id: string } }) => fav.recipe_id._id,
+          (fav: { recipe_id: { _id: string } }) => fav.recipe_id?._id,
         ),
       );
     } catch (error) {
@@ -109,7 +120,11 @@ const RecipeList = () => {
       navigate(`/recipe/details/${item}`);
     }
   };
-
+  const handlePageChange = (newPageIndex: number) => {
+    if (newPageIndex >= 1 && newPageIndex <= totalPages) {
+      setPageIndex(newPageIndex);
+    }
+  };
   useEffect(() => {
     if (data) {
       setRecipes(data.recipes);
@@ -167,6 +182,24 @@ const RecipeList = () => {
           </div>
         ))}
       </div>
+      <div className="pagination-controls flex justify-between mt-10">
+        <button
+          disabled={pageIndex === 1}
+          onClick={() => handlePageChange(pageIndex - 1)}
+          className='px-5 py-2 bg-black rounded text-white'
+        >
+          Previous
+        </button>
+        {totalPages > 0 ?
+        <span>Page {pageIndex} of {totalPages}</span> : 'Page 1' }
+        <button
+          disabled={pageIndex === totalPages}
+          onClick={() => handlePageChange(pageIndex + 1)}
+          className='px-5 py-2 bg-black rounded text-white'
+        >
+          Next
+        </button>
+    </div>
     </div>
   );
 };

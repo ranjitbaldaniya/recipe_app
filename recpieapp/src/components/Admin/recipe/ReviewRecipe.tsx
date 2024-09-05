@@ -7,21 +7,23 @@ interface Recipe {
   create_at: string;
   recipe_name_eng: string;
   category: string;
+  difficulty_level: string;
+  approved: boolean;
+  status:string;
 }
 
 const AdminRecipeManagement: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  console.log(recipes)
-  const [pagination, setPagination] = useState<any>({});
+  const [totalPages, setTotalPages] = useState(1)
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [pageSize] = useState<number>(10);
 
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/admin/recipe-pending');
-        setRecipes(response.data);
-        setPagination(response.data.pagination);
+        const response = await axios.get(`http://localhost:3001/admin/recipe-pending?pageIndex=${pageIndex}&pageSize=${pageSize}`);
+        setRecipes(response.data[0].recipes);
+        setTotalPages(response.data[0].totalPages);
       } catch (error) {
         console.error('Error fetching recipes for admin:', error);
       }
@@ -30,11 +32,20 @@ const AdminRecipeManagement: React.FC = () => {
     fetchRecipes();
   }, [pageIndex, pageSize]);
 
+  const handlePageChange = (newPageIndex: number) => {
+    if (newPageIndex >= 1 && newPageIndex <= totalPages) {
+      setPageIndex(newPageIndex);
+    }
+  };
+
   const handleApprove = async (recipeId: string) => {
     try {
       await axios.put(`http://localhost:3001/admin/approveRecipe/${recipeId}`);
-      // Refresh the list after approving
-      setRecipes(recipes.filter(recipe => recipe._id !== recipeId));
+      setRecipes(prevRecipes =>
+        prevRecipes.map(recipe =>
+          recipe._id === recipeId ? { ...recipe, status: 'approved', approved:true } : recipe
+        )
+      );
     } catch (error) {
       console.error('Error approving recipe:', error);
     }
@@ -42,55 +53,128 @@ const AdminRecipeManagement: React.FC = () => {
 
   const handleReject = async (recipeId: string) => {
     try {
-      await axios.delete(`/api/recipes/${recipeId}`);
-      // Refresh the list after rejecting
-      setRecipes(recipes.filter(recipe => recipe._id !== recipeId));
+      await axios.delete(`http://localhost:3001/admin/rejectRecipe/${recipeId}`);
+      setRecipes(prevRecipes =>
+        prevRecipes.map(recipe =>
+          recipe._id === recipeId ? { ...recipe, status: 'rejected', approved: false } : recipe
+        )
+      );
     } catch (error) {
       console.error('Error rejecting recipe:', error);
     }
   };
 
-  const handlePageChange = (direction: 'next' | 'prev') => {
-    if (direction === 'next' && pagination.next) {
-      setPageIndex(pagination.next.pageIndex);
-    } else if (direction === 'prev' && pagination.prev) {
-      setPageIndex(pagination.prev.pageIndex);
-    }
-  };
-
   return (
     <div className="admin-container">
-      <h1>Recipe Approval Management</h1>
-      <div className="recipe-list">
-        {recipes?.map(recipe => (
-          <div key={recipe._id} className="recipe-card">
-            <h3>{recipe.recipe_name_eng}</h3>
-            <p>{recipe.category}</p>
-            <img
-              src={`http://localhost:3001/${recipe.images}`}
-              alt={recipe.recipe_name_eng}
-              className="recipe-image"
-            />
-            <button onClick={() => handleApprove(recipe._id)}>Approve</button>
-            <button onClick={() => handleReject(recipe._id)}>Reject</button>
+      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+      <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
+      Recipe Approval Management
+      </h4>
+
+      <div className="flex flex-col">
+        <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
+          <div className="p-2.5 xl:p-5">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Images
+            </h5>
+          </div>
+          <div className="p-2.5 text-center xl:p-5">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Name
+            </h5>
+          </div>
+          <div className="p-2.5 text-center xl:p-5">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Category
+            </h5>
+          </div>
+          <div className="hidden p-2.5 text-center sm:block xl:p-5">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Difficulty Level
+            </h5>
+          </div>
+          <div className="hidden p-2.5 text-center sm:block xl:p-5">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Status
+            </h5>
+            <select defaultValue='all' className='rounded px-2 py-2 border-2 mt-2 admin-recipe-select' >
+              <option value='all'>All</option>
+            <option value='approved'>Approved</option>
+            <option value='rejected'>Rejected</option>
+            </select>
+          </div>
+        </div>
+
+        {recipes.map((recipe, key) => (
+          <div
+            className={`grid grid-cols-3 sm:grid-cols-5 ${
+              key === recipes.length - 1
+                ? ''
+                : 'border-b border-stroke dark:border-strokedark'
+            }`}
+            key={key}
+          >
+            <div className="flex items-center gap-3 p-2.5 xl:p-5">
+              <div className="flex-shrink-0">
+                <img className='h-30 w-30' src={`http://localhost:3001/${recipe.images}`} alt="Recipe-image" />
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center p-2.5 xl:p-5">
+              <p className="text-black dark:text-white">{recipe.recipe_name_eng}</p>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center p-2.5 xl:p-5">
+              <p className="">{recipe.category}</p>
+            </div>
+
+            <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
+              <p className="text-meta-5">{recipe.difficulty_level}</p>
+            </div>
+              <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
+                {recipe.status === 'pending' ? (
+                  <>
+                    <button
+                      className='text-meta-3 ml-5'
+                      onClick={() => handleApprove(recipe._id)}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className='text-meta-1 ml-5'
+                      onClick={() => handleReject(recipe._id)}
+                    >
+                      Reject
+                    </button>
+                  </>
+                ) : recipe.approved === true ? (
+                  <span className='text-meta-3 ml-5'>Approved</span>
+                ) : recipe.approved === false ? (
+                  <span className='text-meta-1 ml-5'>Rejected</span>
+                ): ''}
+              </div>
           </div>
         ))}
       </div>
-
-      <div className="pagination-controls">
+      <div className="pagination-controls flex justify-between mt-10">
         <button
-          disabled={!pagination?.prev}
-          onClick={() => handlePageChange('prev')}
+          disabled={pageIndex === 1}
+          onClick={() => handlePageChange(pageIndex - 1)}
+          className='px-5 py-2 bg-black rounded text-white'
         >
           Previous
         </button>
+        {totalPages > 0 ?
+        <span>Page {pageIndex} of {totalPages}</span> : 'Page 1' }
         <button
-          disabled={!pagination?.next}
-          onClick={() => handlePageChange('next')}
+          disabled={pageIndex === totalPages}
+          onClick={() => handlePageChange(pageIndex + 1)}
+          className='px-5 py-2 bg-black rounded text-white'
         >
           Next
         </button>
-      </div>
+    </div>
+    </div>
     </div>
   );
 };

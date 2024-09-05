@@ -302,47 +302,55 @@ export const getRecipeDetails = async (req, res) => {
   }
 };
 
-
-// export const approveRecipe = async (req, res) => {
-//   try {
-//     const { recipeId } = req.params;
-// console.log(req.params)
-//     // Find the recipe by ID and update its approval status
-//     const updatedRecipe = await Recipe.findByIdAndUpdate(
-//       recipeId,
-//       { new: true }
-//     );
-
-//     if (!updatedRecipe) {
-//       return res.status(404).json({ message: "Recipe not found" });
-//     }
-
-//     res.status(200).json(updatedRecipe);
-//   } catch (error) {
-//     console.error("Error approving recipe:", error);
-//     res
-//       .status(500)
-//       .json({ message: "Failed to approve recipe", error: error.message });
-//   }
-// };
-
 export const approveRecipe = async (req, res) => {
   try {
     const { id } = req.params;
-    const approvedReview = await Recipe.findByIdAndUpdate(id, { approved: true }, { new: true });
-    res.status(200).json(approvedReview);
+    const approvedRecipe = await Recipe.findByIdAndUpdate(
+      id,
+      { approved: true, status: "approved" },
+      { new: true }
+    );
+    res.status(200).json(approvedRecipe);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
 
+export const rejectRecipe = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const rejectedRecipe = await Recipe.findByIdAndUpdate(
+      id,
+      { status: "rejected" },
+      { new: true }
+    );
+    res.status(200).json(rejectedRecipe);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
 
-
-// / Get pending reviews
+// Get pending reviews
 export const getPendingRecipe = async (req, res) => {
   try {
-    const pendingReviews = await Recipe.find({ approved: false }).populate(req.params.id );
-    res.status(200).json(pendingReviews);
+    const pageSize = 10;
+    const pageIndex = parseInt(req.query.pageIndex) || 1;
+
+    const totalRecipes = await Recipe.countDocuments({ approved: { $in: [true, false] } });
+    const totalPages = Math.ceil(totalRecipes / pageSize);
+
+    const pendingRecipes = await Recipe.find({ approved: { $in: [true, false] } })
+      .sort({ create_at: -1 })
+      .skip((pageIndex - 1) * pageSize)
+      .limit(pageSize);
+
+    res.status(200).json([{
+        recipes: pendingRecipes,
+        totalRecipes,
+        totalPages,
+        currentPage: pageIndex,
+        pageSize,
+    }]);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

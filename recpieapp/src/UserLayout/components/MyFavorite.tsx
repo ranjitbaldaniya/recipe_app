@@ -53,7 +53,7 @@ const MyFavorite = () => {
       const response = await favorite(id);
       setFavorites(
         response.data.map(
-          (fav: { recipe_id: { _id: string } }) => fav.recipe_id._id,
+          (fav: { recipe_id: { _id: string } }) => fav.recipe_id?._id!,
         ),
       );
     } catch (error) {
@@ -65,7 +65,7 @@ const MyFavorite = () => {
     try {
       const response = await favoriteId(id);
       const favorite = response.data.find(
-        (fav: { recipe_id: { _id: string } }) => fav.recipe_id._id === recipeId,
+        (fav: { recipe_id: { _id: string } }) => fav.recipe_id?._id=== recipeId,
       );
       return favorite?._id;
     } catch (error) {
@@ -81,7 +81,7 @@ const MyFavorite = () => {
           await deleteFavorite(favoriteId);
           setFavorites(favorites.filter((fav) => fav !== recipeId));
           setRecipes(
-            recipes.filter((recipe) => recipe.recipe_id._id !== recipeId),
+            recipes.filter((recipe) => recipe.recipe_id!._id !== recipeId),
           );
         }
       } else {
@@ -110,13 +110,13 @@ const MyFavorite = () => {
                   <div className="w-30 h-30 overflow-hidden">
                     <img
                       src={`http://localhost:3001/${
-                        item.recipe_id.images ?? ''
+                        item.recipe_id?.images ?? ''
                       }`}
                       className="w-full h-50 object-cover cursor-pointer"
                       onClick={() =>
-                        navigate(`/recipe/details/${item.recipe_id._id}`)
+                        navigate(`/recipe/details/${item.recipe_id!._id}`)
                       }
-                      alt={item.recipe_id.recipe_name_eng}
+                      alt={item.recipe_id?.recipe_name_eng}
                     />
                   </div>
                   <div>
@@ -130,18 +130,18 @@ const MyFavorite = () => {
                     <p
                       className="text-lg font-semibold text-black cursor-pointer"
                       onClick={() =>
-                        navigate(`/recipe/details/${item.recipe_id._id}`)
+                        navigate(`/recipe/details/${item.recipe_id?._id}`)
                       }
                     >
-                      {item.recipe_id.recipe_name_eng}
+                      {item.recipe_id?.recipe_name_eng}
                     </p>
                   </div>
                   <div className="flex items-end">
                     <div
-                      onClick={() => handleFavoriteClick(item.recipe_id._id)}
+                      onClick={() => handleFavoriteClick(item.recipe_id?._id)}
                       className="cursor-pointer"
                     >
-                      {favorites.includes(item.recipe_id._id) ? (
+                      {favorites.includes(item.recipe_id?._id) ? (
                         <FaHeart className="text-red-500 my-1" />
                       ) : (
                         <FaRegHeart className="text-gray-500 my-1" />

@@ -505,3 +505,7 @@ height: 75px;
 .green{
   color:green;
 }
+
+.admin-recipe-select{
+  background-color: white!important;
+}
